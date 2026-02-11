@@ -53,7 +53,7 @@ OptiType is used to infer HLA genotypes from RNA-seq data for downstream neoanti
 Neoantigen inference is performed using:
 
 - **DIPAN**  
-  ([Insert GitHub link if public](https://github.com/YY-TMU/DIPAN))
+  ([(https://github.com/YY-TMU/DIPAN](https://github.com/YY-TMU/DIPAN))
 
 DIPAN integrates mutation information and HLA typing results to predict candidate neoantigens for resistant and sensitive groups.
 
