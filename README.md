@@ -42,8 +42,9 @@ HLA typing is performed using:
 
 - **OptiType**  
   [https://github.com/FRED-2/OptiType](https://github.com/FRED-2/OptiType)
-- **DIPAN**
-  [https://github.com/YY-TMU/DIPAN](https://github.com/YY-TMU/DIPAN)
+  
+- **DIPAN** 
+  [https://github.com/YY-TMU/DIPAN](https://github.com/YY-TMU/DIPAN）
 
 OptiType is used to infer HLA genotypes from RNA-seq data for downstream neoantigen prediction.
 
