@@ -19,7 +19,7 @@ The framework operates on processed 10x single-cell data (e.g., BAM files, barco
 APA analysis is performed using:
 
 - **scUTRquant**  
-  https://github.com/mortazavilab/scUTRquant  
+  [https://github.com/mortazavilab/scUTRquant ](https://github.com/Mayrlab/scUTRquant) 
 
 scUTRquant is used to quantify proximal and distal poly(A) site usage from single-cell RNA-seq data. Downstream analyses in RESIST compute relative expression (RE), differential APA, and cell type–specific APA shifts.
 
@@ -41,7 +41,9 @@ cellSNP-lite is used to generate allele depth (AD) and total depth (DP) matrices
 HLA typing is performed using:
 
 - **OptiType**  
-  https://github.com/FRED-2/OptiType  
+  [https://github.com/FRED-2/OptiType](https://github.com/FRED-2/OptiType)
+- **DIPAN**
+  [https://github.com/YY-TMU/DIPAN](https://github.com/YY-TMU/DIPAN)
 
 OptiType is used to infer HLA genotypes from RNA-seq data for downstream neoantigen prediction.
 
