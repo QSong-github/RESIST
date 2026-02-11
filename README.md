@@ -5,7 +5,8 @@ RESIST provides an integrated analysis framework for investigating multi-layer r
 This repository contains analysis modules for:
 
 - Alternative Polyadenylation (APA) analysis  
-- Variant detection and mutation profiling  
+- Variant detection and mutation profiling
+- HLA Typing
 - Neoantigen prediction  
 
 The framework operates on processed 10x single-cell data (e.g., BAM files, barcode lists, count matrices) and builds upon established community tools.
