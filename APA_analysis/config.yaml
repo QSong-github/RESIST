@@ -1,0 +1,9 @@
+dataset_name: "GSE233766"
+sample_file: "/home/liangjialu/blue_qsong1/liangjialu/data/scUTRquant/sample1/GSE233766-group1-sensitive-1/sample_sheet.csv"
+cell_annots: "/blue/qsong1/liangjialu/data/chart-alignment/GSE233766-Melanoma-result/GSM7434407/outs/annots.csv"
+target: "utrome_hg38_v1"
+
+tech: "10xv3"
+strand: "--fr-stranded"
+
+min_umis: 1000
