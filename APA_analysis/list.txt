@@ -1,0 +1,2 @@
+/data/project/SRR26822989/outs/web_summary.html
+/data/project/SRR26822988/outs/
