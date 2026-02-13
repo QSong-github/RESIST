@@ -7,6 +7,52 @@ This repository contains a complete workflow for:
 - Neoantigen prediction  
 - HLA–peptide structural modeling  
 - PyMOL visualization  
+## External Dependencies
+
+RESIST builds upon the following established community tools:
+
+### Alternative Polyadenylation
+
+- **scUTRquant**  
+  https://github.com/Mayrlab/scUTRquant  
+
+---
+
+### Variant Detection
+
+- **cellSNP-lite**  
+  https://github.com/single-cell-genetics/cellsnp-lite  
+
+---
+
+### HLA Typing
+
+- **OptiType**  
+  https://github.com/FRED-2/OptiType  
+
+---
+
+### Neoantigen Prediction
+
+- **DIPAN**  
+  https://github.com/YY-TMU/DIPAN  
+
+---
+
+### Protein Structure Prediction
+
+- **AlphaFold2**  
+  https://github.com/deepmind/alphafold  
+
+- **ColabFold** (lightweight AlphaFold implementation)  
+  https://github.com/sokrypton/ColabFold  
+
+---
+
+### Structure Visualization
+
+- **PyMOL**  
+  https://pymol.org/
 
 ---
 
