@@ -1,90 +1,268 @@
-# RESIST
+# RESIST – Neoantigen and Mutation Analysis Workflow
 
-RESIST provides an integrated analysis framework for investigating multi-layer regulatory mechanisms underlying cancer drug resistance from single-cell sequencing data.
+This repository contains a complete workflow for:
 
-This repository contains analysis modules for:
-
-- Alternative Polyadenylation (APA) analysis  
-- Variant detection and mutation profiling
-- HLA Typing
+- Single-cell mutation enrichment analysis  
+- HLA typing  
 - Neoantigen prediction  
-
-The framework operates on processed 10x single-cell data (e.g., BAM files, barcode lists, count matrices) and builds upon established community tools.
-
----
-
-## Implemented Analysis Modules
-
-### 1. Alternative Polyadenylation (APA) Analysis
-
-APA analysis is performed using:
-
-- **scUTRquant**  
-  [https://github.com/mortazavilab/scUTRquant ](https://github.com/Mayrlab/scUTRquant) 
-
-scUTRquant is used to quantify proximal and distal poly(A) site usage from single-cell RNA-seq data. Downstream analyses in RESIST compute relative expression (RE), differential APA, and cell type–specific APA shifts.
+- HLA–peptide structural modeling  
+- PyMOL visualization  
 
 ---
 
-### 2. Variant Detection
+# PART I – Single-Cell Mutation Enrichment Pipeline
 
-Single-cell SNP detection is performed using:
+## Workflow Overview
 
-- **cellSNP-lite**  
-  https://github.com/single-cell-genetics/cellsnp-lite  
-
-cellSNP-lite is used to generate allele depth (AD) and total depth (DP) matrices from aligned BAM files. These matrices are subsequently used for mutation profiling and downstream integration analyses.
-
----
-
-### 3. HLA Typing
-
-HLA typing is performed using:
-
-- **OptiType**  
-  [https://github.com/FRED-2/OptiType](https://github.com/FRED-2/OptiType)
-  
-
-OptiType is used to infer HLA genotypes from RNA-seq data for downstream neoantigen prediction.
+```
+BAM + barcode list + reference SNPs
+→ cellSNP-lite
+→ cellSNP.cells.vcf.gz
+→ trans.py
+→ cell_AF_table.tsv
+→ R workflow (Fisher test)
+→ fisher_results.tsv
+→ format.py
+→ input.csv (Chr, Pos)
+→ mutation_annotation.py
+→ annotated_output.csv
+```
 
 ---
 
-### 4. Neoantigen Prediction
+## Step 1 – Variant Calling with cellSNP-lite
 
-Neoantigen inference is performed using:
+### Example command
 
-- **DIPAN**  
-  ([(https://github.com/YY-TMU/DIPAN](https://github.com/YY-TMU/DIPAN))
+```bash
+cellsnp-lite \
+    -s sensitive_merged.sorted.bam \
+    -b sensitive_barcodes.txt \
+    -O vcf_sensitive \
+    -R reference_snps.vcf \
+    --cellTAG CB \
+    --UMItag UB \
+    --gzip \
+    --genotype \
+    --minMAF 0.1 \
+    --minCOUNT 20 \
+    -p 8
+```
 
-DIPAN integrates mutation information and HLA typing results to predict candidate neoantigens for resistant and sensitive groups.
+### Parameter description
+
+- `-s` : Sorted BAM file  
+- `-b` : Cell barcode list  
+- `-O` : Output directory  
+- `-R` : Reference SNP VCF  
+- `--cellTAG CB` : Cell barcode tag in BAM  
+- `--UMItag UB` : UMI tag in BAM  
+- `--genotype` : Perform per-cell genotyping  
+- `--minMAF 0.1` : Minor allele frequency threshold  
+- `--minCOUNT 20` : Minimum total read depth  
+- `-p 8` : Number of threads  
+
+### Output used in downstream analysis
+
+```
+cellSNP.cells.vcf.gz
+```
 
 ---
 
-## Required Inputs
+## Step 2 – Convert VCF to AF Table
 
-Before running the variant or neoantigen modules, users should prepare:
+Run:
 
-- Sorted and indexed BAM files  
-- Cell barcode lists  
-- Reference VCF file (for variant calling)  
-- HLA typing results (for neoantigen prediction)
+```bash
+python trans.py cellSNP.cells.vcf.gz cell_AF_table.tsv
+```
 
-Alignment, BAM preprocessing, and dataset-specific filtering depend on sequencing platform and computing environment, and are therefore not included in this repository.
+### Output format
 
----
+| ID | Cell | s_reads | t_reads | AF |
+|----|------|---------|---------|----|
 
-## Output
+Where:
 
-The framework generates:
-
-- AD/DP variant matrices  
-- Differential APA results  
-- Candidate neoantigen lists  
-- Integrated multi-layer regulatory summaries  
+- `ID = chrom_pos_ref_alt`  
+- `s_reads = ALT reads`  
+- `t_reads = total reads`  
+- `AF = s_reads / t_reads`  
 
 ---
 
-## Notes
+## Step 3 – Fisher Enrichment Analysis in R
 
-RESIST provides analysis modules and reference commands for key steps.  
-Users are responsible for adapting upstream preprocessing (e.g., alignment, BAM merging) to their specific datasets and computational environments.
+Follow the provided R workflow script.
+
+The R analysis performs:
+
+- Merge mutation tables from multiple samples  
+- Standardize cell naming by adding sample prefix  
+- Assign group labels (resistant or sensitive)  
+- Binarize mutation per cell using thresholds:  
+  - AF ≥ 0.1  
+  - total reads ≥ 10  
+  - ALT reads ≥ 3  
+- Perform Fisher’s exact test per mutation ID  
+
+### Output files
+
+- `fisher_results.tsv`  
+- `heatmap.pdf`  
+- `heatmap.png`  
+
+---
+
+## Step 4 – Variant Annotation
+
+### Extract genomic coordinates
+
+```bash
+python format.py --input fisher_results.tsv --output input.csv
+```
+
+### Annotate variants
+
+```bash
+python mutation_annotation.py input.csv annotated_output.csv
+```
+
+This step retrieves:
+
+- rsID  
+- Gene name  
+- Functional consequence  
+- Clinical significance  
+- ClinVar annotations  
+
+---
+
+# PART II – HLA Typing and Neoantigen Prediction
+
+## Step 1 – HLA Typing using OptiType
+
+Follow the OptiType instructions:
+
+https://github.com/FRED-2/OptiType/issues/141
+
+### Example
+
+```bash
+OptiTypePipeline.py \
+   -i tumor_R1.fastq tumor_R2.fastq \
+   -r \
+   -o optitype_output \
+   --dna
+```
+
+### Output
+
+```
+optitype_result.tsv
+```
+
+Extract predicted HLA alleles (e.g., HLA-A*02:01).
+
+---
+
+## Step 2 – Neoantigen Prediction using DIPAN
+
+After mutation identification and HLA typing:
+
+- Generate mutant peptide sequences  
+- Predict HLA binding affinity  
+- Identify candidate neoantigens  
+
+### Output
+
+```
+neoantigen_candidates.tsv
+```
+
+---
+
+# PART III – HLA–Peptide Structural Modeling
+
+## Step 1 – AlphaFold2 Structure Prediction
+
+Use:
+
+```
+Neoantigen_visualization/alphafold2.py
+```
+
+Modify line 35:
+
+```python
+query_sequence = "HLA_SEQUENCE:PEPTIDE_SEQUENCE"
+```
+
+### Important notes
+
+- Separate HLA and peptide sequences using ":"  
+- Ensure correct spelling: `peptide`  
+
+### Example
+
+```
+MAVMAPRTLVLLLSGALALTQTWA:LLFGYPVYV
+```
+
+---
+
+## Step 2 – Generate PDB Structure
+
+Running the script produces:
+
+```
+predicted_complex.pdb
+```
+
+---
+
+## Step 3 – Visualization with PyMOL
+
+Use the provided `pymol_command`.
+
+### Example
+
+```python
+load predicted_complex.pdb
+color cyan, chain A
+color red, chain B
+show cartoon
+```
+
+This visualizes:
+
+- HLA structure  
+- Peptide binding conformation  
+- Neoantigen presentation  
+
+---
+
+# Complete Integrated Workflow
+
+```
+Single-cell mutation analysis
+→ HLA typing (OptiType)
+→ DIPAN neoantigen prediction
+→ AlphaFold2 structural modeling
+→ PDB structure generation
+→ PyMOL visualization
+```
+
+---
+
+# Summary
+
+This repository integrates:
+
+- Single-cell mutation enrichment analysis  
+- HLA genotype inference  
+- Neoantigen prediction  
+- Structural modeling of HLA–peptide complexes  
+
+It enables both statistical mutation analysis and structural validation of neoantigen presentation.
