@@ -147,41 +147,63 @@ Follow the OptiType instructions:
 
 https://github.com/FRED-2/OptiType/issues/141
 
-### Example
+### Example (official CLI format)
 
 ```bash
-OptiTypePipeline.py \
-   -i tumor_R1.fastq tumor_R2.fastq \
-   -r \
-   -o optitype_output \
-   --dna
+python /path/to/OptiTypePipeline.py \
+  -i sample_fished_1.fastq sample_fished_2.fastq \
+  (--rna | --dna) \
+  --outdir /path/to/out_dir/
 ```
 
-### Output
+Notes:
 
-```
-optitype_result.tsv
-```
-
-Extract predicted HLA alleles (e.g., HLA-A*02:01).
+- `-i` accepts one FASTQ (single-end) or two FASTQs (paired-end).
+- Use `--rna` for RNA-seq reads and `--dna` for DNA-seq reads.
+- The main output is typically a TSV file containing predicted class I alleles (e.g., `HLA-A*24:02`, `HLA-B*07:02`, `HLA-C*07:02`), which will be used in downstream neoantigen prediction.
 
 ---
 
 ## Step 2 – Neoantigen Prediction using DIPAN
 
-After mutation identification and HLA typing:
+After mutation identification and HLA typing, follow the DIPAN workflow to infer candidate neoantigens.
 
-- Generate mutant peptide sequences  
-- Predict HLA binding affinity  
-- Identify candidate neoantigens  
+DIPAN integrates:
 
-### Output
+- IPA-derived or mutation-derived candidate events
+- Sample-specific HLA alleles inferred by OptiType
 
+### DIPAN output format
+
+A typical DIPAN result table contains columns such as:
+
+- `SYMBOL`
+- `Terminal_exon`
+- `IPAtype`
+- `IPUI`
+- `HLA`
+- `Peptide`
+- `%Rank`
+
+Example:
+
+```text
+SYMBOL   Terminal_exon               IPAtype     IPUI   HLA           Peptide     %Rank
+PAQR3    chr4:78923401-78923856      Composite   0.528  HLA-A*24:02   RYFPGRYLF   0.001
+OXCT1    chr5:41849951-41850029      Composite   0.075  HLA-B*07:02   KPREVRNTL   0.001
+NCKAP1   chr2:182980872-182981243    Composite   0.084  HLA-C*07:02   YYFPFVPSF   0.002
 ```
-neoantigen_candidates.tsv
-```
 
----
+Where:
+
+- `SYMBOL`: gene symbol
+- `Terminal_exon`: genomic coordinates of the terminal exon / IPA region
+- `IPAtype`: IPA category (e.g., Composite)
+- `IPUI`: IPA usage index (higher indicates stronger usage)
+- `HLA`: predicted presenting HLA allele
+- `Peptide`: predicted neoantigen peptide sequence
+- `%Rank`: binding rank score (lower indicates stronger predicted binding)
+
 
 # PART III – HLA–Peptide Structural Modeling
 
