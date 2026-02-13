@@ -17,11 +17,11 @@ def run_scripts(format_script, mutation_script):
             output_csv = os.path.join(group_dir, "out.csv")
 
             if os.path.exists(output_csv):
-                print(f"⏭️ Skipping {output_csv}, already exists.")
+                print(f"Skipping {output_csv}, already exists.")
                 continue
 
             if os.path.exists(fisher_file):
-                print(f"📂 Processing: {fisher_file}")
+                print(f"Processing: {fisher_file}")
 
                 # Run format.py
                 cmd1 = ["python", format_script, "--input", fisher_file, "--output", input_csv]
@@ -31,7 +31,7 @@ def run_scripts(format_script, mutation_script):
                 cmd2 = ["python", mutation_script, input_csv, output_csv]
                 subprocess.run(cmd2, check=True)
 
-                print(f"✅ Finished: {output_csv}")
+                print(f"Finished: {output_csv}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
