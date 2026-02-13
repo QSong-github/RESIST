@@ -1,11 +1,11 @@
-# RESIST – Neoantigen and Mutation Analysis Workflow
+# RESIST - Neoantigen and Mutation Analysis Workflow
 
 This repository contains a complete workflow for:
 
 - Single-cell mutation enrichment analysis  
 - HLA typing  
 - Neoantigen prediction  
-- HLA–peptide structural modeling  
+- HLA-peptide structural modeling  
 - PyMOL visualization  
 ## External Dependencies
 
@@ -56,7 +56,7 @@ RESIST builds upon the following established community tools:
 
 ---
 
-# PART I – Single-Cell Mutation Enrichment Pipeline
+# PART I - Single-Cell Mutation Enrichment Pipeline
 
 ## Workflow Overview
 
@@ -76,7 +76,7 @@ BAM + barcode list + reference SNPs
 
 ---
 
-## Step 1 – Variant Calling with cellSNP-lite
+## Step 1 - Variant Calling with cellSNP-lite
 
 ### Example command
 
@@ -116,7 +116,7 @@ cellSNP.cells.vcf.gz
 
 ---
 
-## Step 2 – Convert VCF to AF Table
+## Step 2 - Convert VCF to AF Table
 
 Run:
 
@@ -138,7 +138,7 @@ Where:
 
 ---
 
-## Step 3 – Fisher Enrichment Analysis in R
+## Step 3 - Fisher Enrichment Analysis in R
 
 Follow the provided R workflow script.
 
@@ -161,7 +161,7 @@ The R analysis performs:
 
 ---
 
-## Step 4 – Variant Annotation
+## Step 4 - Variant Annotation
 
 ### Extract genomic coordinates
 
@@ -185,9 +185,9 @@ This step retrieves:
 
 ---
 
-# PART II – HLA Typing and Neoantigen Prediction
+# PART II - HLA Typing and Neoantigen Prediction
 
-## Step 1 – HLA Typing using OptiType
+## Step 1 - HLA Typing using OptiType
 
 Follow the OptiType instructions:
 
@@ -210,7 +210,7 @@ Notes:
 
 ---
 
-## Step 2 – Neoantigen Prediction using DIPAN
+## Step 2 - Neoantigen Prediction using DIPAN
 
 After mutation identification and HLA typing, follow the DIPAN workflow to infer candidate neoantigens.
 
@@ -251,9 +251,9 @@ Where:
 - `%Rank`: binding rank score (lower indicates stronger predicted binding)
 
 
-# PART III – HLA–Peptide Structural Modeling
+# PART III - HLA-Peptide Structural Modeling
 
-## Step 1 – AlphaFold2 Structure Prediction
+## Step 1 - AlphaFold2 Structure Prediction
 
 Use:
 
@@ -280,7 +280,7 @@ MAVMAPRTLVLLLSGALALTQTWA:LLFGYPVYV
 
 ---
 
-## Step 2 – Generate PDB Structure
+## Step 2 - Generate PDB Structure
 
 Running the script produces:
 
@@ -290,7 +290,7 @@ predicted_complex.pdb
 
 ---
 
-## Step 3 – Visualization with PyMOL
+## Step 3 - Visualization with PyMOL
 
 Use the provided `pymol_command`.
 
@@ -323,7 +323,7 @@ Single-cell mutation analysis
 ```
 
 ---
-# PART IV – Alternative Polyadenylation (APA) Analysis
+# PART IV - Alternative Polyadenylation (APA) Analysis
 
 ## Overview
 
@@ -334,11 +334,11 @@ APA analysis is performed using:
 - **scUTRquant**  
   https://github.com/Mayrlab/scUTRquant  
 
-Downstream processing computes relative expression (RE), differential APA events, and cell type–specific APA shifts.
+Downstream processing computes relative expression (RE), differential APA events, and cell type-specific APA shifts.
 
 ---
 
-## Step 1 – Identify Library Kit Version
+## Step 1 - Identify Library Kit Version
 
 Before running scUTRquant, determine the 10x Genomics library kit version.
 
@@ -369,7 +369,7 @@ This file records inferred kit versions for each sample.
 
 ---
 
-## Step 2 – Configure scUTRquant
+## Step 2 - Configure scUTRquant
 
 Fill in the following files:
 
@@ -387,7 +387,7 @@ Example configuration files are provided in the repository.
 
 ---
 
-## Step 3 – Run scUTRquant
+## Step 3 - Run scUTRquant
 
 After configuration:
 
@@ -404,7 +404,7 @@ This step performs:
 
 ---
 
-## Step 4 – Locate Output Files
+## Step 4 - Locate Output Files
 
 After successful execution, results are generated under the configured output directory (e.g., `data/`).
 
@@ -418,7 +418,7 @@ This file contains transcript-level quantification results.
 
 ---
 
-## Step 5 – Downstream APA Processing and Visualization
+## Step 5 - Downstream APA Processing and Visualization
 
 Use the provided R script:
 
@@ -436,7 +436,7 @@ This script performs:
 
 - Relative expression (RE) calculation  
 - Differential APA analysis  
-- Cell type–specific APA comparison  
+- Cell type-specific APA comparison  
 - APA shift visualization  
 
 ---
