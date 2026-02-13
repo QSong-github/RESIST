@@ -264,27 +264,106 @@ This visualizes:
 - Neoantigen presentation  
 
 ---
+---
 
-# Complete Integrated Workflow
+## Step 4 – Variant Structural Modeling (Optional)
+
+In addition to neoantigen–HLA complexes, individual protein variants can also be structurally evaluated.
+
+This step allows visualization of mutation-induced structural changes at the protein level.
+
+### 1. Prepare Mutant Protein Sequence
+
+Generate the mutated protein sequence based on:
+
+- Variant annotation results (from `annotated_output.csv`)
+- Amino acid change (e.g., A284T)
+
+Create two sequences:
+
+- Wild-type protein sequence
+- Mutant protein sequence
+
+---
+
+### 2. Structure Prediction
+
+Use AlphaFold2 (or ColabFold) to predict structures for:
+
+- Wild-type protein
+- Mutant protein
+
+Example:
+
+```bash
+colabfold_batch wt_sequence.fasta output_wt/
+colabfold_batch mutant_sequence.fasta output_mut/
+```
+
+This generates predicted structure files:
+
+```
+output_wt/model_1.pdb
+output_mut/model_1.pdb
+```
+
+---
+
+### 3. Structural Comparison in PyMOL
+
+Load both structures:
+
+```python
+load wt_model_1.pdb, WT
+load mut_model_1.pdb, MUT
+align MUT, WT
+```
+
+Highlight mutation site:
+
+```python
+select mutation_site, resi 284
+show sticks, mutation_site
+color red, mutation_site
+```
+
+Optional:
+
+```python
+color cyan, WT
+color orange, MUT
+```
+
+This allows:
+
+- Visualization of local conformational changes  
+- Inspection of side-chain orientation differences  
+- Evaluation of structural plausibility  
+
+---
+
+## Complete Integrated Workflow
 
 ```
 Single-cell mutation analysis
 → HLA typing (OptiType)
 → DIPAN neoantigen prediction
-→ AlphaFold2 structural modeling
+→ AlphaFold2 structural modeling (HLA–peptide)
 → PDB structure generation
 → PyMOL visualization
+→ Variant structural modeling (optional)
 ```
 
 ---
 
-# Summary
+## Summary
 
 This repository integrates:
 
 - Single-cell mutation enrichment analysis  
 - HLA genotype inference  
 - Neoantigen prediction  
-- Structural modeling of HLA–peptide complexes  
+- HLA–peptide structural modeling  
+- Variant structural comparison  
 
-It enables both statistical mutation analysis and structural validation of neoantigen presentation.
+It enables both statistical mutation analysis and structural validation of neoantigen presentation and mutation effects.
