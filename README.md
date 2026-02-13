@@ -346,7 +346,8 @@ Example configuration files are provided in the repository.
 After configuration:
 
 ```bash
-scUTRquant run config.yaml
+cd scUTRquant
+snakemake --use-conda --configfile examples/config.yaml
 ```
 
 This step performs:
