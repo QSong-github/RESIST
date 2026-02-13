@@ -1,5 +1,5 @@
 # RESIST - Neoantigen and Mutation Analysis Workflow
-
+Users can configure and resolve environment dependencies according to the specific tool requirements provided in this repository.
 This repository contains a complete workflow for:
 
 - Single-cell mutation enrichment analysis  
