@@ -277,14 +277,144 @@ Single-cell mutation analysis
 ```
 
 ---
+# PART IV – Alternative Polyadenylation (APA) Analysis
 
-# Summary
+## Overview
 
-This repository integrates:
+The APA module in RESIST quantifies alternative polyadenylation events from single-cell RNA-seq data and evaluates differential 3′ UTR usage between groups.
 
-- Single-cell mutation enrichment analysis  
-- HLA genotype inference  
-- Neoantigen prediction  
-- Structural modeling of HLA–peptide complexes  
+APA analysis is performed using:
 
-It enables both statistical mutation analysis and structural validation of neoantigen presentation.
+- **scUTRquant**  
+  https://github.com/Mayrlab/scUTRquant  
+
+Downstream processing computes relative expression (RE), differential APA events, and cell type–specific APA shifts.
+
+---
+
+## Step 1 – Identify Library Kit Version
+
+Before running scUTRquant, determine the 10x Genomics library kit version.
+
+Run:
+
+```bash
+python find_kit_version.py list.txt
+```
+
+### Input
+
+`list.txt`
+
+A text file containing one sample directory per line.
+
+Example:
+
+```
+/path/to/sample1
+/path/to/sample2
+```
+
+### Output
+
+`kit.csv`
+
+This file records inferred kit versions for each sample.
+
+---
+
+## Step 2 – Configure scUTRquant
+
+Fill in the following files:
+
+- `config.yaml`
+- `sample_sheet.csv`
+
+Using:
+
+- Kit information from `kit.csv`
+- Sample metadata
+- Reference transcriptome path
+- Output directory
+
+Example configuration files are provided in the repository.
+
+---
+
+## Step 3 – Run scUTRquant
+
+After configuration:
+
+```bash
+scUTRquant run config.yaml
+```
+
+This step performs:
+
+- Proximal and distal poly(A) site quantification  
+- Transcript-level abundance estimation  
+- APA isoform assignment  
+
+---
+
+## Step 4 – Locate Output Files
+
+After successful execution, results are generated under the configured output directory (e.g., `data/`).
+
+The primary output file used for downstream analysis is:
+
+```
+GSE261898.txs.Rds
+```
+
+This file contains transcript-level quantification results.
+
+---
+
+## Step 5 – Downstream APA Processing and Visualization
+
+Use the provided R script:
+
+```
+APA_processing_graph.R
+```
+
+Run in R:
+
+```r
+source("APA_processing_graph.R")
+```
+
+This script performs:
+
+- Relative expression (RE) calculation  
+- Differential APA analysis  
+- Cell type–specific APA comparison  
+- APA shift visualization  
+
+---
+
+## APA Output
+
+The APA module generates:
+
+- RE matrices  
+- Differential APA statistics  
+- APA shift visualizations  
+- Processed APA summary tables  
+
+---
+
+## Integrated APA Workflow
+
+```
+Processed 10x data
+→ find_kit_version.py
+→ config.yaml + sample_sheet.csv
+→ scUTRquant run
+→ GSE261898.txs.Rds
+→ APA_processing_graph.R
+→ APA results and figures
+```
+
+
