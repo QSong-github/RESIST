@@ -1,11 +1,19 @@
-PASS: Python AST parsing: 6 files; none executed
+RESIST v4 — local static checks
+PASS: Python AST parsing: 6 files; analysis scripts not imported or executed
 PASS: Bash syntax parsing: 10 files; no jobs submitted
-PASS: R parsing: 25 files; analysis expressions not evaluated
-PASS: A-D --list/--help from /tmp, using package path with spaces; no input loading
-PASS: Invalid module step and reversed B2/B1 order rejected before R execution
-PASS: Step manifest: 15 R entries resolve to existing scripts
-PASS: Markdown links: 38 relative file/heading links resolve; historical map excluded
-PASS: Migration targets and release hashes: 188 source-file records
-PASS: Exactly 4 top-level folders; no populated example, expanded reference, or results tree
-PASS: YAML parsing: 5 environment/configuration/template files; no installation or analysis execution
-PASS: Original-to-archive byte comparison: 119 reference files unchanged
+PASS: R parsing: 25 files; expressions not evaluated; parsed code identical to preceding package
+PASS: Release metadata agrees; A-D --list/--help/--version work from /tmp with spaces in package path
+PASS: Version reporting follows VERSION in a renamed temporary package; no hardcoded release label
+PASS: Cross-module step and reversed B2/B1 order rejected before R execution
+PASS: Step manifest: 15 runnable entries resolve; defaults and contracts unchanged
+PASS: YAML parsing: 5 environment/configuration/template files plus citation metadata
+PASS: Active documentation: 46 relative file/heading/image/navigation links resolve
+PASS: No superseded RESIST release labels in active text/filenames; README remains release-number-free
+PASS: Main workflow image is byte-identical to the supplied figure
+PASS: Source traceability: all 188 original files mapped; source and current target hashes verified
+PASS: All 119 bundled references and their compressed archive remain byte-identical; no extraction to disk
+PASS: Five historical documentation records preserved byte-for-byte in source-history archive
+PASS: Exactly four top-level directories; no populated inputs, expanded references, or analysis results
+PASS: Analysis logic, external software/chemistry identifiers, and reference configuration preserved; D6 filename change isolated
+
+Analysis workflows, input preflight, environment installation, and large downloads were not executed.

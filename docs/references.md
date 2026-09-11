@@ -7,9 +7,9 @@ large external databases are not included or downloaded automatically.
 ## Bundled reference archive
 
 `data/reference_bundle.tar.gz` is approximately 16.8 MB compressed and 75.3 MB
-expanded. It contains every reference file supplied in v2-2 except the README,
-whose guidance is replaced by this page. A per-file migration/checksum record is
-in [migration.tsv](migration.tsv).
+expanded. It contains all 119 supplied reference-data files. This page replaces
+the original reference README. A per-file migration/checksum record is in
+[migration.tsv](migration.tsv).
 
 ```bash
 # Package-local storage, matching config/example.yaml and config/config.yaml:
@@ -20,7 +20,7 @@ For shared storage:
 
 ```bash
 mkdir -p /your/HPC/shared/resist
- tar -xzf data/reference_bundle.tar.gz -C /your/HPC/shared/resist
+tar -xzf data/reference_bundle.tar.gz -C /your/HPC/shared/resist
 ```
 
 Then set `paths.ref_data: /your/HPC/shared/resist/reference` in your own config.
@@ -56,7 +56,7 @@ Confirm file format and version before running C9.
 
 **LINCS:** consult [GSE70138](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE70138)
 and obtain the Level 4 file corresponding to the source pipeline's
-`n78980x22268_2015-06-30` signature matrix. The original handover inconsistently
+`n78980x22268_2015-06-30` signature matrix. The source instructions inconsistently
 pairs a `.gct` filename with a `parse_gctx()` example. Confirm whether the downloaded
 file is text GCT or HDF5 GCTX and use the parser appropriate to that format and your
 installed cmapR version. Do not merely change its extension. Inspect the matrix

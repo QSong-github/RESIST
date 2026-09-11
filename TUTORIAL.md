@@ -1,11 +1,11 @@
 # Tutorial: from the GSE104987 example to RESIST results
 
 This tutorial explains the commands to run **later on the HPC**. It begins with
-the real annotated Seurat object linked in v2-2. It does not require a LINCS matrix,
+the shared annotated Seurat object described below. It does not require a LINCS matrix,
 miRDB download, BAM, FASTQ, or GPU for the core A–C walkthrough.
 
 **Release status:** the example object's structure was inspected during preparation;
-the analysis commands below were not run to completion for this release. Expected
+the analysis commands below have not been executed for this release. Expected
 output names come from the source code, not from an invented successful run.
 HPC execution and numerical validation remain to be performed.
 
@@ -32,12 +32,12 @@ additional dependencies. **Separate data:** A2/A3, the variant branch, and Modul
 
 ## Step 1 — Prepare the HPC environment
 
-Transfer the compact `RESIST_v3_02` folder or ZIP to your project space and enter
-that directory. Follow your institution's rules for environment installation and
+Transfer the RESIST package ZIP to your HPC project space, extract it, and enter
+the extracted directory. The path below is a placeholder for that directory. Follow your institution's rules for environment installation and
 compute allocation; perform analysis on a compute node.
 
 ```bash
-cd /your/HPC/project/RESIST_v3_02
+cd /your/HPC/project/RESIST
 conda env create -f config/setup/environment.yml
 conda activate resist
 Rscript config/setup/install_r_packages.R
@@ -45,7 +45,7 @@ python3 --version
 Rscript --version
 ```
 
-Replace `/your/HPC/project/RESIST_v3_02` once with your actual location. The supplied
+Replace `/your/HPC/project/RESIST` once with your actual location. The supplied
 environment is an installation specification, not a fully resolved lockfile.
 The R installer adds missing CRAN/Bioconductor packages and CellChat. It downloads
 software dependencies, not the large reference datasets. Resolve any installation
@@ -74,7 +74,7 @@ sha256sum data/example/GSE104987_seurat_afterAnno.RDS
 ```
 
 Record the SHA-256 with your run. No publisher-supplied immutable checksum was
-available in the handover, so this records your downloaded version rather than
+provided with the example, so this records the file you downloaded rather than
 proving identity with every earlier copy. If Drive reports a quota or permission
 error, use the shared folder or ask the data owner to restore access. Do not save
 a login/HTML page with an `.RDS` extension and treat it as an object.
@@ -85,7 +85,7 @@ files immediately inside the configured input directory.
 
 ## Step 3 — Unpack the bundled references and inspect the input
 
-The archive contains the reference files already supplied in v2-2. It is about
+The archive contains the supplied RESIST reference files. It is about
 16.8 MB compressed and 75.3 MB expanded. Extract it **on the HPC**:
 
 ```bash
@@ -106,7 +106,7 @@ paths:
 ```
 
 The exact keys are `spatial_data` and `ref_data`. Keep the other settings in the
-file, including reference keys and inherited dataset exclusions. To inspect the
+file, including reference keys and configured dataset exclusions. To inspect the
 object yourself:
 
 ```bash
@@ -169,7 +169,7 @@ This runs B1 followed by B4. Expected products are:
 
 | Filename under `data/results/example/B/` | Meaning |
 |---|---|
-| `GSE104987_deg.csv` | Full table returned by the inherited per-cell-type comparison |
+| `GSE104987_deg.csv` | Full table returned by the per-cell-type comparison |
 | `GSE104987_deg.sig.csv` | Rows with `p_val_adj < 0.05` and `abs(avg_log2FC) >= 1` |
 | `GSE104987_deg_Tumor_cells_volcano.pdf` / `.png` | Tumor-cell effect sizes and adjusted p-values |
 | `GSE104987_seurat_afterAnno.RDS_ITH_box.pdf` / `.png` | Distribution of the PCA-distance heterogeneity score |
@@ -227,10 +227,9 @@ C7 compares up- and down-regulated tumor DEGs with each bundled human RBP target
 set. Inspect `RBP`, `Targets`, `Up_DEG`, `Up_overlap`, `Up_pval`, `Down_DEG`,
 `Down_overlap`, `Down_pval`, `FDR_up`, and `FDR_dn`.
 
-**Naming caveat:** the inherited columns `FDR_up` and `FDR_dn` actually contain
-**Holm-adjusted p-values**, because the original code used R's default
-`p.adjust()` method. v3_02 makes the method explicit while retaining values and
-column names for compatibility. Do not describe them as BH FDR.
+**Naming caveat:** the columns `FDR_up` and `FDR_dn` contain
+**Holm-adjusted p-values**. C7 explicitly uses `p.adjust(method="holm")`,
+preserving the source method and column names. These values are not BH FDR.
 
 C8 can additionally write:
 
@@ -239,7 +238,7 @@ GSE104987_deg_rbp_enrichment_up_circle.pdf / .png
 GSE104987_deg_rbp_enrichment_dn_circle.pdf / .png
 ```
 
-The inherited plotting gate requires at least five significant up-regulated RBP
+The C8 plotting gate requires at least five significant up-regulated RBP
 sets before producing the up plot; it then requires at least five significant
 down-regulated sets for the down plot. Thus a table may exist without either
 plot, and a down plot can be suppressed by the earlier up-set gate. The launcher
@@ -272,8 +271,8 @@ bash run_D.sh --config config/config.yaml \
 ```
 
 Relative APA paths resolve against the package root. The sample sheet's `group`
-column is not the source of the final sensitive/resistant mapping in the inherited
-D3 code; the annotation object's mapped conditions determine that assignment.
+column is not the source of the final sensitive/resistant mapping in
+D3; the annotation object's mapped conditions determine that assignment.
 Inspect mapping failures and `Unknown` assignments before interpreting contrasts.
 
 Expected products under `data/results/D/APA/<cohort_id>/` include

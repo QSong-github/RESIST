@@ -1,9 +1,9 @@
 # Scientific scope and limitations
 
-This release improves organization, instructions, path handling, and selected
-execution defects. It does not establish that every inherited analysis is
-methodologically appropriate for every dataset or reproduce the resource's
-published numerical results.
+RESIST combines analyses with distinct data requirements and statistical
+assumptions. Choose the branches appropriate to the study design and validate
+their numerical behavior on the HPC. The static package checks do not
+establish reproduction of published results.
 
 ## Interpretation by analysis
 
@@ -40,8 +40,8 @@ published numerical results.
   returned in the tumor DEG table. These choices affect enrichment and should
   be reviewed rather than silently described as all measured genes.
 - **RBP adjustment:** C7's legacy `FDR_up`/`FDR_dn` columns contain Holm-adjusted
-  p-values. The explicit `method="holm"` in v3_02 preserves the original numeric
-  method. C8's legend now identifies it correctly.
+  p-values. C7 explicitly uses `method="holm"`, preserving the source method.
+  C8 legends identify this adjustment as Holm.
 - **Conditional figures:** C8 and other plotting scripts filter their inputs.
   A lack of a figure can be a valid no-output step; it is not evidence of a
   negative biological result without inspecting the underlying table.
@@ -49,15 +49,15 @@ published numerical results.
 ## Remaining blockers and assumptions
 
 1. **C2 is absent.** The cellSNP-to-AF conversion cannot be reproduced from the
-   handover. No replacement filtering is invented.
+   supplied code. No replacement filtering is invented.
 2. **TF motif code is absent.** There is no runnable TF motif result.
 3. **A3 is a cohort-specific template.** Metadata and image-name assumptions
    remain; they require adaptation for other spatial objects.
 4. **D2 read mappings differ between branches.** Verify chemistry and FASTQ
    roles before use; the release preserves the original mapping choices.
-5. **D3 needs cohort validation.** The missing annotation assignment and relative
-   paths were repaired, but TXS schema, barcode matching, group assignment, and
-   statistical interpretation still require HPC testing. RData inputs must
+5. **D3 needs cohort validation.** Annotation loading and package-relative paths
+   are implemented, but TXS schema, barcode matching, group assignment, and
+   statistical interpretation require HPC testing. RData inputs must
    contain an unambiguous Seurat annotation object.
 6. **D5 is Colab-specific.** Use the external ColabFold CLI for an HPC workflow
    and record its options/environment; no equivalence of model outputs is claimed.
@@ -67,7 +67,7 @@ published numerical results.
    checks are documented in the release validation record; they are not an
    end-to-end analysis benchmark.
 
-The resource counts retained in `CITATION.cff` are inherited from v2-2. No fresh
-census of the RESIST database was performed here. Complete publication metadata,
+The resource counts in `CITATION.cff` match the supplied resource description
+and workflow figure. No fresh census of the RESIST database was performed here. Complete publication metadata,
 authorship, dataset provenance, and redistribution/license information with the
 project authors before public release; do not invent a DOI or software license.

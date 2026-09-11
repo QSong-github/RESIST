@@ -51,10 +51,10 @@ Outputs under `<results>/D/APA/<cohort_id>/`:
 | `RE_Differential_Analysis_Results.csv` | Eligible differential comparisons |
 | `ECDF_by_celltype/`, `violin_by_celltype/` | Distribution figures, when eligible |
 
-The previously missing `annot_info` assignment has been connected to the existing
-annotation helper. This is a proposed execution repair, not proof that each
-cohort's barcodes map correctly. Validate the cohort on the HPC before using its
-APA results.
+D3 loads the configured annotation object through the shared annotation helper
+and assigns it to `annot_info` for barcode mapping and diagnostics. Validate
+TXS structure, barcode overlap, and mapped conditions on the HPC before
+interpreting APA results.
 
 ## HLA typing: D4
 
@@ -104,11 +104,10 @@ D6 expects the loaded model to contain heavy chain A, B2M chain B, and peptide
 chain C. Run it from the directory where you want the image saved:
 
 ```bash
-pymol -cq /path/to/chosen_model.pdb /path/to/RESIST_v3_02/scripts/D/D6_visualize_complex.pml
+pymol -cq /path/to/chosen_model.pdb /path/to/RESIST/scripts/D/D6_visualize_complex.pml
 ```
 
-It writes `MHC_Peptide_Interaction_v2.png` in the current working directory.
-The retained output name is a legacy filename, not the package release version.
+It writes `MHC_Peptide_Interaction.png` in the current working directory.
 Confirm the chain identities and examine model confidence and interface geometry.
 A predicted complex does not establish binding affinity, antigen presentation,
 immunogenicity, or therapeutic efficacy.

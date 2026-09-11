@@ -1,69 +1,58 @@
-# Release notes — v3_02
+# Release notes — v4
 
-## Response to the organizational review
+This is a complete RESIST package containing the four analysis modules, shared
+code, configuration, compressed references, workflow figure, and documentation.
+The public README uses the resource name without a release-number banner.
 
-| Concern | Change |
+## Changes in this release
+
+| Area | Current behavior |
 |---|---|
-| Too many top-level folders | Reduced 12 to 4: `config`, `scripts`, `data`, `docs` |
-| Mixed quick-start commands | Four root entry points, A/B/C/D, each with an explicit default scope |
-| No worked example | Root `TUTORIAL.md`, using the observed GSE104987 file and metadata |
-| Unclear results | Quick-start product summaries, exact example filenames, and `docs/outputs.md` |
-| Large references on a laptop | Supplied 75.3 MB reference bundle compressed to 16.8 MB; large optional downloads deferred to HPC |
-| Difficult to trace changes | Original step IDs preserved; file-level migration/checksum map and static validation record |
+| Release identity | `VERSION`, `CITATION.cff`, and `config/steps.json` consistently identify the package as `v4` |
+| Launcher reporting | All four launchers read `VERSION` for their execution banner and `run.json`; `--version` displays it without loading analysis inputs or R packages |
+| Usage documentation | Tutorial, module guides, data instructions, and SLURM messages use the current layout and generic package paths |
+| Workflow overview | The supplied main workflow figure remains prominently embedded in the README |
+| Quick start | Four A/B/C/D commands state their exact default steps and expected products |
+| Worked example | The GSE104987 tutorial retains download, configuration, input inspection, A–C commands, output checkpoints, and a separate APA route |
+| APA descriptions | Script comments and the Module D guide accurately describe the implemented annotation loading and remaining cohort checks |
+| Structure image | D6 writes `MHC_Peptide_Interaction.png`; script, module guide, and output catalog agree |
+| Historical records | Earlier layout, migration, release, and validation records are preserved in `docs/source-history.tar.gz` |
+| File traceability | `docs/migration.tsv` uses stable source/current column names; current hashes and package checksums are regenerated |
 
-## Organization
+The package retains four top-level folders: `config`, `scripts`, `data`, and
+`docs`. The default route is A1 → B1/B4 → C7/C8. D defaults to D3 and requires its
+own prepared APA inputs. Optional analyses retain their original step IDs and
+remain documented in the module guides.
 
-The four analysis modules now live under `scripts/A`–`D`, with analysis scripts
-flattened within each module. Shared R code and manual utilities are grouped under
-`scripts/lib` and `scripts/utils`. Installation and SLURM material live under
-`config`. Small example metadata and sequences are in `data/templates`. Inputs,
-unpacked references, and outputs are created on the HPC only when needed.
+## Compatibility and provenance
 
-The source directory supplied by the user was not modified. No original analysis
-entry point was deliberately removed. Missing C2 and TF code remain clearly
-identified; empty placeholder folders were not retained to imply functionality.
+Analysis definitions, thresholds, statistical adjustments, reference contents,
+and default step selections are unchanged from the preceding package. The D6
+image filename is the only analysis-output naming change; update downstream
+commands that expect its previous filename. The original source directory and
+previous local package remain untouched.
 
-## Execution and documentation repairs
+Reference-database releases, sequencing chemistry, and external tool/model
+versions are independent of the RESIST release. Identifiers such as `10xv3`,
+`miRDB_v6.0`, Hallmark `v2024.1`, and ColabFold/AlphaFold model versions retain
+their correct values. Historical source filenames remain in provenance records
+and source-origin comments. They must not be relabeled as RESIST versions.
 
-- Updated root discovery, shared-library paths, documentation links, and result
-  paths for the new layout. The launcher resolves a config path from the caller's
-  directory and runs scripts with a stable package root.
-- Added selected-step prerequisite checks and logs that distinguish failures from
-  successful commands that produce no new files. These checks are intended for
-  later HPC use; they do not claim comprehensive data validation.
-- Added metadata alias handling for A1/A2/B1/B4/B5 without changing saved inputs.
-- Moved A2 computation inside its dataset loop, corrected its input source from
-  the spatial directory to the configured single-cell directory, and relocated
-  the custom CellChat helper. These changes require HPC runtime review.
-- Replaced A3's undefined plotting-palette variable with the shared palette;
-  the study-specific spatial interface remains documented.
-- Corrected C8 plot paths to join the output directory and filename, and corrected
-  its mouse basename comparison. Made C7's inherited Holm adjustment explicit
-  and labeled that method in the C8 legends; no BH substitution was made.
-- Connected D3's annotation loading to its existing metadata helper and resolved
-  GTF/annotation/10x/TXS relative paths against the package root. Ambiguous RData
-  containers now fail instead of silently selecting among several Seurat objects.
-- Added Python/jsonlite to the launcher's installation requirements and corrected
-  dependency declarations for optional R tools. Package-resolution/runtime testing
-  remains for the HPC.
-- Replaced overstated or inaccurate documentation: A1 plots cluster composition;
-  B4/B5 currently export figures rather than score CSVs; B1 is cell-level;
-  C7's legacy FDR-named columns hold Holm-adjusted values; D5 is not a generic
-  local script; D2 and LINCS parsing inconsistencies are disclosed.
+The migration map accounts for all 188 original supplied files, including 119
+reference files stored unchanged inside the compressed reference bundle. Retired
+wrappers and empty placeholders are identified explicitly. Historical documents
+inside the source-history archive describe earlier states; use the active guides
+for execution. The root `SHA256SUMS.txt` covers all other distributed files.
 
-## Deliberately preserved scientific choices
+## Validation and HPC testing
 
-The analysis definitions, cell-count/significance thresholds, dataset exclusion
-lists, default active-assay behavior, human-reference branches, and C8 plot gates
-remain inherited. This package does not perform a new methodological validation,
-recalculate published statistics, harmonize cohort designs, infer missing C2
-filtering, or implement TF motifs.
+This release was checked for syntax, launcher interfaces, version consistency,
+documentation links, source traceability, and packaging integrity. The analysis
+workflows, environment installation, SLURM submissions, and large external
+reference downloads were not run. See the [validation record](validation.md)
+and [HPC acceptance guidance](hpc.md#first-run-acceptance).
 
-## Validation boundary
-
-Per the user's request, the analysis workflows and large external reference
-downloads were not run for this release. An earlier metadata-only inspection of
-the shared object established the tutorial's input facts; the temporary large
-example file was then removed to conserve local storage. No real or synthetic
-analysis results are presented as completed output. See [validation.md](validation.md)
-for the exact static checks performed and the remaining HPC acceptance work.
+The package retains the documented implementation boundaries: C2 and TF motif
+code are absent; A2/A3/D3 need suitable independent inputs; D2 read roles require
+review; LINCS parsing and dependency compatibility require HPC validation.
+No biological outputs or claims of numerical reproduction are supplied.

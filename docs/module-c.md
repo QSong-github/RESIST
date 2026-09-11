@@ -72,7 +72,6 @@ versions before reporting variant associations.
 
 ## TF motifs
 
-No TF motif-enrichment script or runnable TF workflow was included in v2-2.
-This release preserves that limitation instead of adding an empty folder or
-claiming a TF result. Establish the intended input regions/gene mapping, motif
+The supplied code contains no TF motif-enrichment script or runnable TF
+workflow. Establish the intended input regions/gene mapping, motif
 database, background, and method with the authors before implementing it.

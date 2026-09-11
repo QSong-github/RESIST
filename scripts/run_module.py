@@ -21,7 +21,9 @@ def digest(path):
     return h.hexdigest()
 
 def main():
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--version", action="version", version=f"RESIST {version}")
     parser.add_argument('module', choices=list('ABCD'))
     parser.add_argument('--steps', help='Comma-separated step IDs; use --list for choices')
     parser.add_argument('--config', type=Path, default=ROOT / 'config/config.yaml')
@@ -54,7 +56,7 @@ def main():
         parser.error(f'Configuration does not exist: {config}')
     env = dict(os.environ, RESIST_HOME=str(ROOT), RESIST_CONFIG=str(config), RESIST_APA_CONFIG=str(apa))
     env['RESIST_STEPS'] = ','.join(steps)
-    print(f"RESIST v3_02 | Module {args.module} | Steps: {', '.join(steps)}", flush=True)
+    print(f"RESIST {version} | Module {args.module} | Steps: {', '.join(steps)}", flush=True)
     preflight = subprocess.run(['Rscript', str(ROOT/'scripts/preflight.R')], env=env,
                                cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     # The final machine-readable path line is emitted only after validation passes.
@@ -73,7 +75,7 @@ def main():
     run_id = dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + args.module + '-' + uuid.uuid4().hex[:6]
     logdir = output/'logs'/run_id
     logdir.mkdir(parents=True)
-    report = {'version':'v3_02', 'run_id':run_id, 'steps':steps, 'config':str(config),
+    report = {'version':version, 'run_id':run_id, 'steps':steps, 'config':str(config),
               'config_sha256':digest(config), 'started_utc':dt.datetime.now(dt.timezone.utc).isoformat(),
               'status':'running', 'step_results':[]}
     shutil.copy2(config, logdir/'config.yaml')

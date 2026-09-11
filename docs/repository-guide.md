@@ -14,7 +14,7 @@ The four root runners share one Python dispatcher and one R preflight script.
 | `scripts/A/` … `scripts/D/` | Analysis entry points, flattened within each module |
 | `scripts/lib/` | R configuration, metadata compatibility, palettes, common I/O, CellChat plotting helper |
 | `scripts/utils/` | Legacy manual utilities; not invoked automatically |
-| `data/reference_bundle.tar.gz` | Compressed references from v2-2 |
+| `data/reference_bundle.tar.gz` | Compressed supplied references |
 | `data/templates/` | Small sequencing/APA/structure examples, not production inputs |
 | `docs/` | Human-readable method, output, HPC, and release records |
 
@@ -34,7 +34,33 @@ and document prerequisites and products. Do not introduce cohort-specific absolu
 paths into an analysis script. Record scientific method changes separately from
 path/organization changes.
 
-The historical v2 mapping is retained as [migration-v2.md](migration-v2.md).
-It describes an earlier release and is not a current execution guide. The v3 map
-is [migration.tsv](migration.tsv); [release notes](release-notes.md) explain the
-behavioral changes.
+## Release identity and traceability
+
+`VERSION` is the source of the package label displayed by all four launchers
+and saved in `run.json`. Read it without loading data or R packages:
+
+```bash
+bash run_A.sh --version
+```
+
+`CITATION.cff` and `config/steps.json` carry matching release metadata.
+Reference-database releases, software versions, and sequencing chemistry
+identifiers are independent of the RESIST package label and must retain
+their exact values. Public usage examples use a generic `RESIST` directory;
+substitute the actual location of your extracted package.
+
+The [migration map](migration.tsv) traces each original supplied file to its
+current location using `source_path`, `current_path`, `source_sha256`, and
+`current_sha256`. A target written as `archive.tar.gz::member` refers to a
+file inside an archive. Retired wrappers and empty placeholders have no
+current target and carry an explicit reason. Original filenames in the
+source column remain unchanged for provenance.
+
+The [source-history archive](source-history.tar.gz) preserves earlier layout,
+migration, release, and validation records. Its contents describe historical
+states and are not current execution instructions. Use the active guides in
+this directory and the [release notes](release-notes.md) for this package.
+
+`SHA256SUMS.txt` covers every other distributed file, including the archives
+and migration map. Verify an untouched extracted package on the HPC with
+`sha256sum -c SHA256SUMS.txt` before editing its configuration.

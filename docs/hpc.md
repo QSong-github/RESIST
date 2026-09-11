@@ -48,8 +48,8 @@ hard-code an institution-specific R module. Check that both `Rscript` and `pytho
 are available inside the job.
 
 B4 memory grows quadratically with tumor-cell count. B6 needs a much larger
-allocation; the v2-2 comments describe tens of GB and previously used a 90 GB
-submission request. An example override is:
+allocation; the source comments describe tens of GB and include a 90 GB
+submission request. This is not a measured requirement for your dataset. An example override is:
 
 ```bash
 sbatch --mem=90G --time=12:00:00 --export=ALL,RESIST_HOME="$PWD" \

@@ -16,11 +16,11 @@
 #              *.pdf / *.png        - cohort-level violin and ECDF figures
 # Usage    : Rscript scripts/D/D3_apa_quantification_and_plots.R
 # Origin   : APA_analysis/APA_processing_graph.R
-# Notes    : `annot_info` is consumed by map_from_annot_to_sce() and
-#            diagnose_barcode_overlap() but is never assigned in the inherited
-#            code; the annotation object named in the configuration has to be
-#            loaded into it before this script will run end to end. See
-#            docs/repository-guide.md, Known issues.
+# Notes    : The configured annotation object is loaded into `annot_info`
+#            for map_from_annot_to_sce() and diagnose_barcode_overlap().
+#            Validate cohort-specific TXS structure, barcode overlap, and
+#            condition mapping before interpreting results. See
+#            docs/module-d.md and docs/methods-and-limitations.md.
 # =============================================================================
 
 ## --- RESIST bootstrap --------------------------------------------------------

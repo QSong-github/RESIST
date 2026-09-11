@@ -1,40 +1,51 @@
-# Validation record — v3_02
+# Validation record
 
-**Scope:** organization, documentation, static syntax, path/manifest consistency,
-and packaging integrity. No full analysis workflows, SLURM jobs, or large external
-reference downloads were executed for this release.
+**Package:** v4. **Scope:** documentation, release identity, static syntax,
+launcher interfaces, path/manifest consistency, and packaging integrity.
+No analysis workflows, environment installation, SLURM jobs, or large external
+reference downloads were executed during this release update.
 
 ## Checks completed
 
 | Check | Result |
 |---|---|
-| Top-level layout | 12 original folders consolidated into 4 |
-| Python parsing | 6 files parsed with the Python AST parser |
-| R parsing | 25 files parsed; analysis expressions not evaluated |
+| Release consistency | `VERSION`, citation metadata, and the step manifest agree; all A–D `--version` responses identify the same package |
+| Version cleanup | Active guides and package metadata contain no superseded RESIST release labels; independent tool/reference/chemistry identifiers retain their exact values |
+| Python parsing | 6 files parsed with the Python AST parser; analysis scripts not imported or executed |
+| R parsing | 25 files parsed without evaluating analysis expressions |
 | Shell parsing | 10 shell/SLURM files checked with `bash -n` |
-| Root runner interfaces | A/B/C/D `--list` and `--help` exercised from `/tmp`, using the package path containing spaces |
-| Invalid requests | Cross-module step and reversed B2/B1 order rejected before R execution |
-| Step manifest | 15 selectable R entries resolve to existing scripts |
-| Local documentation | Relative file and heading links checked; the labeled historical v2 map is excluded |
-| Source traceability | 188 original files accounted for in the migration map, including explicitly retired wrappers/placeholders |
-| Bundled references | 119 files preserved byte-for-byte in the compressed reference archive |
-| Package contents | No populated example-data folder, expanded reference tree, or generated biological results |
+| Root runner interfaces | A/B/C/D `--list`, `--help`, and `--version` exercised from `/tmp`, including a package path containing spaces |
+| Invalid requests | Cross-module steps and reversed B2/B1 order rejected before R execution |
+| Step manifest | 15 selectable R entries resolve to existing scripts; default selections are unchanged |
+| Structured files | Environment/configuration/template YAML, citation metadata, and step JSON parse successfully |
+| Local documentation | Active Markdown file/heading links and HTML image/navigation links resolve |
+| Main workflow figure | Identical to the supplied image |
+| Source traceability | 188 original files accounted for in the migration map, with current target hashes verified |
+| Bundled references | 119 files preserved byte-for-byte inside the compressed reference archive |
+| Historical records | Earlier documentation retained in a separate provenance archive |
+| Package contents | Exactly 4 top-level folders; no populated example, input, expanded-reference, or biological-result directories |
 
-The exact static-check output is saved in [static-checks.txt](static-checks.txt).
-Environment/YAML and archive checks are also recorded there when performed.
+The detailed local check output is saved in [static-checks.txt](static-checks.txt).
+The complete ZIP is checked against the package files, including CRC integrity
+and the root checksum manifest. Its SHA-256 is provided in the adjacent
+`.zip.sha256` file. To verify the extracted package before changing configuration:
 
-## Observed example metadata
+```bash
+sha256sum -c SHA256SUMS.txt
+```
 
-Before the user clarified that execution would occur later on the HPC, the shared
-`GSE104987_seurat_afterAnno.RDS` was downloaded temporarily and inspected as a
-Seurat object. It contained 2,669 cells, with 1,597 resistant and 1,072 sensitive,
-all annotated as malignant cells; RNA/SCT assays; UMAP/PCA reductions; and 50 PCA
-components. This inspection did not run any RESIST biological analysis step.
-The temporary approximately 291 MB file was removed to conserve local storage.
+## Example metadata used by the tutorial
 
-The observed metadata informs the tutorial's input checkpoint. There is no
-reference set of DEG counts, enrichment results, figures, or runtimes from a
-completed v3_02 run.
+During preparation of the preceding package, the shared
+`GSE104987_seurat_afterAnno.RDS` was temporarily inspected as a Seurat object.
+It contained 2,669 cells: 1,597 resistant and 1,072 sensitive, all annotated as
+malignant cells; RNA/SCT assays; UMAP/PCA reductions; and 50 PCA components.
+This metadata inspection did not execute a RESIST biological analysis step.
+The temporary approximately 291 MB input was removed to conserve local storage.
+
+The tutorial carries forward these observed input facts. This release update
+neither downloaded nor re-inspected that object. No reference DEG counts,
+enrichment results, analysis figures, or measured workflow runtimes are supplied.
 
 ## Deferred to HPC acceptance testing
 
@@ -42,14 +53,14 @@ completed v3_02 run.
 - Download and inspect the current shared example; preserve its checksum.
 - Execute A1, then B1/B4, then C7/C8, inspecting each table and figure.
 - Check empty/significance-filtered results and active-assay behavior.
-- Enable B2/B3/B5/C9/C10 only after the relevant dependencies are prepared.
+- Enable B2/B3/B5/C9/C10 after their relevant dependencies are prepared.
 - Validate A2/A3 and D3 on appropriate multi-cell-type/spatial/APA inputs.
 - Review D2 read assignments, recover or validate C2, and define the missing TF
   workflow before claiming those analyses are reproducible.
 - Obtain LINCS only when needed, validate its parser/schema, and measure HPC memory.
 - Compare numerical outputs with an authoritative reference analysis before
-  describing this release as reproducing published results.
+  describing a run as reproducing published results.
 
-Static success demonstrates a coherent package structure and syntactically
-readable code. It does not establish package-version compatibility, correct
-barcode mapping, numerical equivalence, or scientific validity of every method.
+Static success establishes a consistent package layout and readable syntax.
+It does not establish dependency compatibility, correct barcode mapping,
+numerical equivalence, or scientific validity for a particular cohort.

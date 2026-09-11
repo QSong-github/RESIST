@@ -9,7 +9,7 @@
 # Initial resource placeholders; adjust for the cohort and step.
 # Activate the project environment before sbatch, or add your site-specific setup.
 set -euo pipefail
-: "${RESIST_HOME:?Set RESIST_HOME to the extracted RESIST_v3_02 root.}"
+: "${RESIST_HOME:?Set RESIST_HOME to the extracted RESIST package root.}"
 [[ $# -ge 1 ]] || { echo "Usage: sbatch ... submit_module.sbatch A|B|C|D [runner options]" >&2; exit 2; }
 module_id="$1"
 shift

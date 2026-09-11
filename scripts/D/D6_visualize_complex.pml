@@ -7,7 +7,7 @@
 #            groove and the peptide conformation are both visible.
 # Inputs   : the rank-1 model from D5, loaded before this script runs, e.g.
 #              pymol -cq hla_peptide_ITDVGSGMY_rank_001*.pdb D6_visualize_complex.pml
-# Outputs  : MHC_Peptide_Interaction_v2.png in the working directory
+# Outputs  : MHC_Peptide_Interaction.png in the working directory
 # Usage    : pymol -cq <model.pdb> D6_visualize_complex.pml
 # Origin   : Neoantigen_visualization/pymol_command
 # Notes    : Chains follow the ':'-joined query order of D5 - A is the HLA
@@ -42,4 +42,4 @@ color red, binding_site
 
 # 6. High-Resolution Image Export
 # Path de-identified for portability
-png ./MHC_Peptide_Interaction_v2.png, dpi=600
+png ./MHC_Peptide_Interaction.png, dpi=600
