@@ -9,6 +9,7 @@
   <a href="https://resist.website/">Explore the database</a> ·
   <a href="TUTORIAL.md">Example-data tutorial</a> ·
   <a href="docs/outputs.md">Output catalog</a> ·
+  <a href="#external-tools">External tools</a> ·
   <a href="docs/hpc.md">HPC guide</a>
 </p>
 
@@ -216,6 +217,40 @@ The [input-data guide](docs/input-data.md) describes the Seurat metadata and
 branch-specific inputs. The [reference-data guide](docs/references.md) distinguishes
 the compressed bundle from external resources such as LINCS and miRDB. Download
 large references only for analyses that need them.
+
+## External tools
+
+RESIST uses the following key analysis tools. A–D refer to the modules above;
+some tools support optional branches beyond the quick start. **Upstream** and
+**separate** workflows run outside the module launchers.
+
+| Tool | Used by | Role in the workflow | Official source |
+|---|---|---|---|
+| **Seurat** | Shared R environment; A, B, D analyses | Single-cell and spatial objects, existing embeddings, differential expression, and annotation handling | [Documentation](https://satijalab.org/seurat/) |
+| **scType** | Upstream cell-type annotation | Assign cell types before RESIST analysis; the launchers read saved annotations | [GitHub](https://github.com/IanevskiAleksandr/sc-type) |
+| **CellChat** | A · cell–cell communication | Infer and compare ligand–receptor communication networks between response conditions | [GitHub](https://github.com/jinworks/CellChat) |
+| **clusterProfiler** | B · pathway enrichment | GO, KEGG, and gene-set enrichment of differentially expressed genes | [Bioconductor](https://bioconductor.org/packages/clusterProfiler/) |
+| **msigdbr** | B · pathway enrichment | Retrieve MSigDB Hallmark gene sets for the enrichment analysis | [Documentation](https://igordot.github.io/msigdbr/) |
+| **GSVA** | B · EMT scoring | Calculate EMT gene-set scores from expression data | [Bioconductor](https://bioconductor.org/packages/GSVA/) |
+| **cmapR** | B · drug-signature analysis | Handle the prepared LINCS annotated-matrix object; RESIST calculates connectivity scores | [GitHub](https://github.com/cmap/cmapR) |
+| **biomaRt** | C · miRNA enrichment | Map gene identifiers used to connect DEG lists with miRNA target predictions | [Bioconductor](https://bioconductor.org/packages/biomaRt/) |
+| **cellSNP-lite** | C · variant analysis | Count reference and alternative alleles at selected SNP loci from BAM files and cell barcodes | [GitHub](https://github.com/single-cell-genetics/cellsnp-lite) |
+| **scUTRquant** | Upstream quantification for D | Quantify single-cell 3′ UTR isoforms; RESIST consumes the prepared TXS outputs | [GitHub](https://github.com/Mayrlab/scUTRquant) |
+| **OptiType** | D · separate HLA typing | Predict HLA-A, HLA-B, and HLA-C alleles; the wrapper expects an `OptiTypePipeline.py` installation | [GitHub](https://github.com/FRED-2/OptiType) |
+| **DIPAN** | D · separate candidate generation | Identify intronic-polyadenylation-derived neoantigen candidates from RNA-seq; no automated RESIST wrapper is included | [GitHub](https://github.com/YY-TMU/DIPAN) |
+| **ColabFold / AlphaFold2** | D · separate structural prediction | Model candidate peptide–MHC complexes in a dedicated Colab or GPU environment | [ColabFold](https://github.com/sokrypton/ColabFold), [AlphaFold2](https://github.com/google-deepmind/alphafold) |
+| **PyMOL** | D · separate structural visualization | Inspect predicted complexes and render peptide–MHC interaction figures | [PyMOL](https://pymol.org/) |
+
+For new Seurat inputs, store reviewed scType labels in `cell_type` or `celltype`,
+following the [input-data guide](docs/input-data.md). The shared example is
+already annotated, so its quick start does not require running scType again.
+
+Full dependencies, including supporting libraries, are listed in the
+[environment specification](config/setup/environment.yml),
+[R package installer](config/setup/install_r_packages.R), and
+[Python requirements](config/setup/requirements.txt). Follow the module guides
+for installation and the [reference-data guide](docs/references.md) for HPC data
+preparation. Cite the tools used in your analysis using their official guidance.
 
 ## Implementation scope
 
