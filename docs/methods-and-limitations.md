@@ -28,7 +28,7 @@ establish reproduction of published results.
   Cells from the same sample are not independent biological replicates.
   Where the design contains replicates, choose an appropriate sample-aware
   analysis; Seurat's [differential-expression vignette](https://satijalab.org/seurat/articles/de_vignette)
-  provides a pseudobulk example. No pseudobulk model is added in this release.
+  provides a pseudobulk example. No pseudobulk model is included.
 - **Exclusions:** the distinct `paired_pre_post_seu`, `paired_pre_post_anno`, and
   `harmony_integrated` filename lists are preserved. Their original comments
   are not proof that every listed dataset must be excluded in a new study.
@@ -54,7 +54,7 @@ establish reproduction of published results.
 3. **A3 is a cohort-specific template.** Metadata and image-name assumptions
    remain; they require adaptation for other spatial objects.
 4. **D2 read mappings differ between branches.** Verify chemistry and FASTQ
-   roles before use; the release preserves the original mapping choices.
+   roles before use; the code preserves the original mapping choices.
 5. **D3 needs cohort validation.** Annotation loading and package-relative paths
    are implemented, but TXS schema, barcode matching, group assignment, and
    statistical interpretation require HPC testing. RData inputs must
@@ -64,7 +64,7 @@ establish reproduction of published results.
 7. **Dependencies are not pinned completely.** Older Seurat/GSVA/msigdbr/CellChat
    interfaces and cached objects may need version-specific adjustments.
 8. **All branches have not been executed.** Static parsing and path/packaging
-   checks are documented in the release validation record; they are not an
+   checks are documented in the validation record; they are not an
    end-to-end analysis benchmark.
 
 The resource counts in `CITATION.cff` match the supplied resource description

@@ -98,7 +98,7 @@ colabfold_batch data/templates/hla_peptide_complex_colabfold.fasta \
 Do not assume a three-record FASTA will be interpreted as one three-chain complex.
 Model type, MSA, templates, relaxation, software version, and resources should be
 chosen and recorded for the actual study. No structures or runtime guarantees
-are supplied with this release.
+are supplied with the package.
 
 D6 expects the loaded model to contain heavy chain A, B2M chain B, and peptide
 chain C. Run it from the directory where you want the image saved:

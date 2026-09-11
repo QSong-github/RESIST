@@ -1,4 +1,4 @@
-RESIST v4 — local static checks
+RESIST — local static checks
 PASS: Python AST parsing: 6 files; analysis scripts not imported or executed
 PASS: Bash syntax parsing: 10 files; no jobs submitted
 PASS: R parsing: 25 files; expressions not evaluated; parsed code identical to preceding package
@@ -7,13 +7,17 @@ PASS: Version reporting follows VERSION in a renamed temporary package; no hardc
 PASS: Cross-module step and reversed B2/B1 order rejected before R execution
 PASS: Step manifest: 15 runnable entries resolve; defaults and contracts unchanged
 PASS: YAML parsing: 5 environment/configuration/template files plus citation metadata
-PASS: Active documentation: 46 relative file/heading/image/navigation links resolve
+PASS: Active documentation: 50 relative file/heading/image/navigation links resolve
 PASS: No superseded RESIST release labels in active text/filenames; README remains release-number-free
 PASS: Main workflow image is byte-identical to the supplied figure
 PASS: Source traceability: all 188 original files mapped; source and current target hashes verified
 PASS: All 119 bundled references and their compressed archive remain byte-identical; no extraction to disk
-PASS: Five historical documentation records preserved byte-for-byte in source-history archive
+PASS: Historical documentation archive preserved byte-for-byte
 PASS: Exactly four top-level directories; no populated inputs, expanded references, or analysis results
-PASS: Analysis logic, external software/chemistry identifiers, and reference configuration preserved; D6 filename change isolated
+PASS: All analysis scripts, launchers, and scientific configurations remain byte-identical
+PASS: Preceding package unchanged; complete file inventory preserved
+PASS: README uses output descriptions without script IDs; A-D commands, formats, paths, dependencies, and scope checks pass
+PASS: No RESIST release-number labels in active Markdown guides
+PASS: Markdown rendering: A-D sections, four product lists, literal output placeholders, and workflow image preserved
 
 Analysis workflows, input preflight, environment installation, and large downloads were not executed.

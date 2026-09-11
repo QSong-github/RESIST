@@ -59,7 +59,7 @@ source column remain unchanged for provenance.
 The [source-history archive](source-history.tar.gz) preserves earlier layout,
 migration, release, and validation records. Its contents describe historical
 states and are not current execution instructions. Use the active guides in
-this directory and the [release notes](release-notes.md) for this package.
+this directory and the [package update notes](release-notes.md) for this package.
 
 `SHA256SUMS.txt` covers every other distributed file, including the archives
 and migration map. Verify an untouched extracted package on the HPC with

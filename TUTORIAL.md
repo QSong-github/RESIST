@@ -4,8 +4,8 @@ This tutorial explains the commands to run **later on the HPC**. It begins with
 the shared annotated Seurat object described below. It does not require a LINCS matrix,
 miRDB download, BAM, FASTQ, or GPU for the core A–C walkthrough.
 
-**Release status:** the example object's structure was inspected during preparation;
-the analysis commands below have not been executed for this release. Expected
+**Execution status:** the example object's structure was inspected during preparation;
+the analysis commands below await HPC execution and validation. Expected
 output names come from the source code, not from an invented successful run.
 HPC execution and numerical validation remain to be performed.
 
@@ -27,13 +27,18 @@ of the original experiment. Preserve the filename and verify the source study
 before assigning treatment, replicate, or patient identities. In particular,
 `orig.ident` is not automatically an independent biological-replicate identifier.
 
-**Core route:** A1 → B1/B4 → C7/C8. **Extensions:** B2/B3, B5, and C9/C10 with their
-additional dependencies. **Separate data:** A2/A3, the variant branch, and Module D.
+**Core walkthrough:** A — UMAP and cluster composition; B — differential
+expression and heterogeneity; C — RBP target enrichment and plots. C uses
+B's full DEG table. **Extensions:** pathway enrichment, EMT scoring, and miRNA
+target enrichment with their additional dependencies. **Separate data:**
+communication, spatial and variant analyses, and Module D. Technical script
+identifiers are provided alongside the detailed methods below.
 
 ## Step 1 — Prepare the HPC environment
 
 Transfer the RESIST package ZIP to your HPC project space, extract it, and enter
-the extracted directory. The path below is a placeholder for that directory. Follow your institution's rules for environment installation and
+the extracted directory. The path below is a placeholder for that directory.
+Follow your institution's rules for environment installation and
 compute allocation; perform analysis on a compute node.
 
 ```bash
@@ -58,7 +63,7 @@ tools; install them later if using C4–C6 or D1. D5 has its own ColabFold envir
 ## Step 2 — Download the example directly onto the HPC
 
 The example is in the [RESIST shared example folder](https://drive.google.com/drive/folders/1ve9xCxtnPBiF7JgU9kDDzOgzA5dCQl2F).
-The file link observed for this release is
+The shared file is
 [GSE104987_seurat_afterAnno.RDS](https://drive.google.com/file/d/1orpBafB6Ii-xW8dMOxtdCI9P2c-OtT-I/view).
 
 On an HPC node that permits downloads, use the public-file downloader

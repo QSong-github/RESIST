@@ -48,4 +48,4 @@ Candidate negative-connectivity signatures are hypotheses for follow-up, not
 validated treatment recommendations.
 
 See [references](references.md) before B5/B6 and [methods and limitations](methods-and-limitations.md)
-for interpretive boundaries and release-specific caveats.
+for interpretive boundaries and implementation caveats.

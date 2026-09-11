@@ -62,7 +62,7 @@ file is text GCT or HDF5 GCTX and use the parser appropriate to that format and 
 installed cmapR version. Do not merely change its extension. Inspect the matrix
 orientation and row/column annotation required by B6, serialize the parsed object
 as `GSE70138_LINCS_Level4.rds`, and record source/checksum/parser versions. This
-release does not claim that conversion has been validated.
+conversion still requires format and numerical validation.
 
 The large LINCS download and conversion are intentionally outside the default
 example route. The absence of this file should affect B6, not prevent A1/B1/B4/C7.

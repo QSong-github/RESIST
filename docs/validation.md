@@ -1,16 +1,18 @@
 # Validation record
 
-**Package:** v4. **Scope:** documentation, release identity, static syntax,
+**Scope:** documentation, release identity, static syntax,
 launcher interfaces, path/manifest consistency, and packaging integrity.
 No analysis workflows, environment installation, SLURM jobs, or large external
-reference downloads were executed during this release update.
+reference downloads were executed during this package update.
 
 ## Checks completed
 
 | Check | Result |
 |---|---|
 | Release consistency | `VERSION`, citation metadata, and the step manifest agree; all A–D `--version` responses identify the same package |
-| Version cleanup | Active guides and package metadata contain no superseded RESIST release labels; independent tool/reference/chemistry identifiers retain their exact values |
+| Version cleanup | Active guides use no RESIST release-number labels; package metadata agrees; independent tool/reference/chemistry identifiers retain their exact values |
+| README clarity | No numbered script IDs; A–D descriptions state default outputs, file formats, destinations, and input dependencies |
+| Analysis preservation | All analysis and launcher scripts are byte-identical to the preceding package |
 | Python parsing | 6 files parsed with the Python AST parser; analysis scripts not imported or executed |
 | R parsing | 25 files parsed without evaluating analysis expressions |
 | Shell parsing | 10 shell/SLURM files checked with `bash -n` |
@@ -36,14 +38,14 @@ sha256sum -c SHA256SUMS.txt
 
 ## Example metadata used by the tutorial
 
-During preparation of the preceding package, the shared
+During an earlier documentation-preparation step, the shared
 `GSE104987_seurat_afterAnno.RDS` was temporarily inspected as a Seurat object.
 It contained 2,669 cells: 1,597 resistant and 1,072 sensitive, all annotated as
 malignant cells; RNA/SCT assays; UMAP/PCA reductions; and 50 PCA components.
 This metadata inspection did not execute a RESIST biological analysis step.
 The temporary approximately 291 MB input was removed to conserve local storage.
 
-The tutorial carries forward these observed input facts. This release update
+The tutorial carries forward these observed input facts. This documentation update
 neither downloaded nor re-inspected that object. No reference DEG counts,
 enrichment results, analysis figures, or measured workflow runtimes are supplied.
 

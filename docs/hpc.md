@@ -1,12 +1,12 @@
 # HPC preparation and submission
 
-Transfer this compact release, install dependencies in an HPC environment, and
+Transfer the compact package, install dependencies in an HPC environment, and
 place large data/reference files in project or shared storage. Nothing in the
 quick start requires storing those large files on a laptop.
 
 ## Prepare once
 
-1. Extract the release in persistent project space.
+1. Extract the package in persistent project space.
 2. Create and activate the R/Python environment using tutorial Step 1.
 3. Download the example and unpack references on the HPC.
 4. Use `config/example.yaml` for the worked example; copy `config/config.yaml`
