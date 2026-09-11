@@ -1,0 +1,15 @@
+# scUTRquant configuration (input to the EXTERNAL scUTRquant workflow,
+# https://github.com/Mayrlab/scUTRquant - not read by any RESIST script).
+# The two absolute paths of the original file were replaced by placeholders;
+# every other value is the setting used for the RESIST cohorts.
+#
+# Origin : RESIST-main/APA_analysis/config.yaml
+dataset_name: "GSE233766"
+sample_file: "/path/to/apa_scutrquant_sample_sheet.csv"   # edit: per-run sample sheet
+cell_annots: "/path/to/cellranger/<sample>/outs/annots.csv"   # edit: see scripts/utils/merge_cellranger_annotations.sh
+target: "utrome_hg38_v1"
+
+tech: "10xv3"
+strand: "--fr-stranded"
+
+min_umis: 1000

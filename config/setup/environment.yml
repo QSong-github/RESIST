@@ -1,0 +1,46 @@
+# =============================================================================
+# RESIST | conda environment for the R analysis modules
+#   conda env create -f config/setup/environment.yml && conda activate resist
+#   Rscript config/setup/install_r_packages.R      # CellChat, GSVA and friends
+# =============================================================================
+name: resist
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - pip
+  - r-base=4.5
+  - r-tidyverse
+  - r-seurat
+  - r-matrix
+  - r-yaml
+  - r-jsonlite
+  - r-devtools
+  - r-remotes
+  - r-rcolorbrewer
+  - r-ggsci
+  - r-ggrepel
+  - r-cowplot
+  - r-patchwork
+  - r-pheatmap
+  - r-viridis
+  - r-reshape2
+  - r-scales
+  - r-broom
+  - r-treemap
+  - r-treemapify
+  - r-packcircles
+  - r-r.utils
+  - bioconductor-singlecellexperiment
+  - bioconductor-genomicranges
+  - bioconductor-rtracklayer
+  - bioconductor-clusterprofiler
+  - bioconductor-gsva
+  - bioconductor-gseabase
+  - bioconductor-fgsea
+  - bioconductor-biomart
+  - bioconductor-org.hs.eg.db
+  - bioconductor-org.mm.eg.db
+  - bioconductor-cmapr
+  - r-msigdbr

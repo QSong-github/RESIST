@@ -1,467 +1,134 @@
-# RESIST - Neoantigen and Mutation Analysis Workflow
-Users can configure and resolve environment dependencies according to the specific tool requirements provided in this repository.
-This repository contains a complete workflow for:
+# RESIST · v3_02
 
-- Single-cell mutation enrichment analysis  
-- HLA typing  
-- Neoantigen prediction  
-- HLA-peptide structural modeling  
-- PyMOL visualization  
-## External Dependencies
+**Single-cell and spatial omics analyses of cancer drug resistance**
 
-RESIST builds upon the following established community tools:
+RESIST organizes analyses into four biological modules: cellular characterization
+(A), transcriptional programs (B), regulatory associations (C), and immunogenomic
+features (D). The resource is available at [resist.website](https://resist.website/).
 
-### Alternative Polyadenylation
+This release simplifies the supplied v2-2 package from **12 to 4 top-level folders**,
+adds a worked tutorial, and makes each command's inputs and outputs explicit.
+It is prepared for **subsequent HPC testing**; the full workflows have not been
+executed or validated as part of this release.
 
-- **scUTRquant**  
-  https://github.com/Mayrlab/scUTRquant  
+**Start with [TUTORIAL.md](TUTORIAL.md)** for the real GSE104987 example, including
+download, input inspection, execution order, expected filenames, and interpretation.
+Download data and expand reference archives on the HPC, where they will be used.
 
----
+## Quick start — A, B, C, D
 
-### Variant Detection
+Run these commands from the extracted `RESIST_v3_02` directory **on the HPC**.
+Complete [tutorial Steps 1–3](TUTORIAL.md#step-1--prepare-the-hpc-environment)
+first: activate the environment, download the example, and unpack the small
+bundled reference archive. The selected example profile writes results to
+`data/results/example/`.
 
-- **cellSNP-lite**  
-  https://github.com/single-cell-genetics/cellsnp-lite  
-
----
-
-### HLA Typing
-
-- **OptiType**  
-  https://github.com/FRED-2/OptiType  
-
----
-
-### Neoantigen Prediction
-
-- **DIPAN**  
-  https://github.com/YY-TMU/DIPAN  
-
----
-
-### Protein Structure Prediction
-
-- **AlphaFold2**  
-  https://github.com/deepmind/alphafold  
-
-- **ColabFold** (lightweight AlphaFold implementation)  
-  https://github.com/sokrypton/ColabFold  
-
----
-
-### Structure Visualization
-
-- **PyMOL**  
-  https://pymol.org/
-
----
-
-# PART I - Single-Cell Mutation Enrichment Pipeline
-
-## Workflow Overview
-
-```
-BAM + barcode list + reference SNPs
-→ cellSNP-lite
-→ cellSNP.cells.vcf.gz
-→ trans.py
-→ cell_AF_table.tsv
-→ R workflow (Fisher test)
-→ fisher_results.tsv
-→ format.py
-→ input.csv (Chr, Pos)
-→ mutation_annotation.py
-→ annotated_output.csv
-```
-
----
-
-## Step 1 - Variant Calling with cellSNP-lite
-
-### Example command
+### A. Characterization
 
 ```bash
-cellsnp-lite \
-    -s sensitive_merged.sorted.bam \
-    -b sensitive_barcodes.txt \
-    -O vcf_sensitive \
-    -R reference_snps.vcf \
-    --cellTAG CB \
-    --UMItag UB \
-    --gzip \
-    --genotype \
-    --minMAF 0.1 \
-    --minCOUNT 20 \
-    -p 8
+bash run_A.sh --config config/example.yaml
 ```
 
-### Parameter description
+Runs **A1**. Produces a four-panel UMAP/cluster-composition figure in **PDF and PNG**,
+using the existing embeddings and annotations.
 
-- `-s` : Sorted BAM file  
-- `-b` : Cell barcode list  
-- `-O` : Output directory  
-- `-R` : Reference SNP VCF  
-- `--cellTAG CB` : Cell barcode tag in BAM  
-- `--UMItag UB` : UMI tag in BAM  
-- `--genotype` : Perform per-cell genotyping  
-- `--minMAF 0.1` : Minor allele frequency threshold  
-- `--minCOUNT 20` : Minimum total read depth  
-- `-p 8` : Number of threads  
-
-### Output used in downstream analysis
-
-```
-cellSNP.cells.vcf.gz
-```
-
----
-
-## Step 2 - Convert VCF to AF Table
-
-Run:
+### B. Transcriptional analysis
 
 ```bash
-python trans.py cellSNP.cells.vcf.gz cell_AF_table.tsv
+bash run_B.sh --config config/example.yaml
 ```
 
-### Output format
+Runs **B1 and B4**. Produces **full and significant DEG CSV tables**, a **tumor-cell
+volcano plot**, and an **intratumor-heterogeneity box plot**; figures are PDF/PNG.
+The contrast is **resistant minus sensitive**. Run this before C.
 
-| ID | Cell | s_reads | t_reads | AF |
-|----|------|---------|---------|----|
-
-Where:
-
-- `ID = chrom_pos_ref_alt`  
-- `s_reads = ALT reads`  
-- `t_reads = total reads`  
-- `AF = s_reads / t_reads`  
-
----
-
-## Step 3 - Fisher Enrichment Analysis in R
-
-Follow the provided R workflow script.
-
-The R analysis performs:
-
-- Merge mutation tables from multiple samples  
-- Standardize cell naming by adding sample prefix  
-- Assign group labels (resistant or sensitive)  
-- Binarize mutation per cell using thresholds:  
-  - AF ≥ 0.1  
-  - total reads ≥ 10  
-  - ALT reads ≥ 3  
-- Perform Fisher’s exact test per mutation ID  
-
-### Output files
-
-- `fisher_results.tsv`  
-- `heatmap.pdf`  
-- `heatmap.png`  
-
----
-
-## Step 4 - Variant Annotation
-
-### Extract genomic coordinates
+### C. Regulatory analysis
 
 ```bash
-python format.py --input fisher_results.tsv --output input.csv
+bash run_C.sh --config config/example.yaml
 ```
 
-### Annotate variants
+Runs **C7 and C8** using B1's full DEG table and the bundled RBP reference.
+Produces an **RBP-enrichment CSV** and, when the inherited significance/count
+criteria are met, **RBP circle plots** in PDF/PNG. No significant circle plot is
+a possible outcome; inspect the table and log.
+
+### D. Immunogenomic analysis — separate inputs required
+
+The GSE104987 Seurat example does **not** contain the scUTRquant, 10x matrix, and
+annotation/GTF inputs needed for APA. Prepare those inputs using
+[tutorial Step 7](TUTORIAL.md#step-7--module-d-with-a-separately-prepared-apa-cohort),
+then run:
 
 ```bash
-python mutation_annotation.py input.csv annotated_output.csv
+bash run_D.sh --config config/config.yaml --apa-config config/apa_config.yaml
 ```
 
-This step retrieves:
+Runs **D3**. Produces **gene-by-cell relative-expression RDS matrices**, **per-cell
+summary CSVs**, **barcode-mapping diagnostics**, **differential APA tables**, and
+**ECDF/violin figures**, subject to eligible data. D1/D2 preparation, D4 HLA typing,
+and D5/D6 structural work have their own inputs and commands in the module guide.
 
-- rsID  
-- Gene name  
-- Functional consequence  
-- Clinical significance  
-- ClinVar annotations  
+These four entry points are the only quick-start execution route. Their defaults
+are deliberately small and explicit; they do not imply that every analysis in a
+module can be run from the same example file.
 
----
+## Additional analyses
 
-# PART II - HLA Typing and Neoantigen Prediction
-
-## Step 1 - HLA Typing using OptiType
-
-Follow the OptiType instructions:
-
-https://github.com/FRED-2/OptiType/issues/141
-
-### Example (official CLI format)
+Use `--list` to see available steps and outputs without loading data. Use `--check`
+on the HPC to inspect prerequisites without executing analyses. Use `--steps` to
+select additional work explicitly, for example:
 
 ```bash
-python /path/to/OptiTypePipeline.py \
-  -i sample_fished_1.fastq sample_fished_2.fastq \
-  (--rna | --dna) \
-  --outdir /path/to/out_dir/
+bash run_B.sh --list
+bash run_B.sh --config config/example.yaml --steps B5 --check
+bash run_B.sh --config config/example.yaml --steps B5
 ```
 
-Notes:
+| Module | Additional analyses | Guide |
+|---|---|---|
+| A | CellChat communication; study-specific spatial plots | [Module A](docs/module-a.md) |
+| B | GO/KEGG/Hallmark enrichment; EMT; LINCS connectivity | [Module B](docs/module-b.md) |
+| C | miRNA enrichment; variant calling/annotation; missing C2 and TF implementation documented | [Module C](docs/module-c.md) |
+| D | APA preparation; HLA typing; candidate peptide–MHC modeling | [Module D](docs/module-d.md) |
 
-- `-i` accepts one FASTQ (single-end) or two FASTQs (paired-end).
-- Use `--rna` for RNA-seq reads and `--dna` for DNA-seq reads.
-- The main output is typically a TSV file containing predicted class I alleles (e.g., `HLA-A*24:02`, `HLA-B*07:02`, `HLA-C*07:02`), which will be used in downstream neoantigen prediction.
-
----
-
-## Step 2 - Neoantigen Prediction using DIPAN
-
-After mutation identification and HLA typing, follow the DIPAN workflow to infer candidate neoantigens.
-
-DIPAN integrates:
-
-- IPA-derived or mutation-derived candidate events
-- Sample-specific HLA alleles inferred by OptiType
-
-### DIPAN output format
-
-A typical DIPAN result table contains columns such as:
-
-- `SYMBOL`
-- `Terminal_exon`
-- `IPAtype`
-- `IPUI`
-- `HLA`
-- `Peptide`
-- `%Rank`
-
-Example:
+## Four folders, one place to start
 
 ```text
-SYMBOL   Terminal_exon               IPAtype     IPUI   HLA           Peptide     %Rank
-PAQR3    chr4:78923401-78923856      Composite   0.528  HLA-A*24:02   RYFPGRYLF   0.001
-OXCT1    chr5:41849951-41850029      Composite   0.075  HLA-B*07:02   KPREVRNTL   0.001
-NCKAP1   chr2:182980872-182981243    Composite   0.084  HLA-C*07:02   YYFPFVPSF   0.002
+RESIST_v3_02/
+├── README.md                 overview and A–D quick start
+├── TUTORIAL.md               detailed real-data walkthrough
+├── run_A.sh … run_D.sh       consistent module entry points
+├── config/                  paths, sample sheets, dependencies, SLURM template
+├── scripts/                 A/, B/, C/, D/, shared code, and utilities
+├── data/                    compressed references and small example templates
+└── docs/                    module guides, output catalog, HPC and release notes
 ```
 
-Where:
-
-- `SYMBOL`: gene symbol
-- `Terminal_exon`: genomic coordinates of the terminal exon / IPA region
-- `IPAtype`: IPA category (e.g., Composite)
-- `IPUI`: IPA usage index (higher indicates stronger usage)
-- `HLA`: predicted presenting HLA allele
-- `Peptide`: predicted neoantigen peptide sequence
-- `%Rank`: binding rank score (lower indicates stronger predicted binding)
-
-
-# PART III - HLA-Peptide Structural Modeling
-
-## Step 1 - AlphaFold2 Structure Prediction
-
-Use:
-
-```
-Neoantigen_visualization/alphafold2.py
-```
-
-Modify line 35:
-
-```python
-query_sequence = "HLA_SEQUENCE:PEPTIDE_SEQUENCE"
-```
-
-### Important notes
-
-- Separate HLA and peptide sequences using ":"  
-- Ensure correct spelling: `peptide`  
-
-### Example
-
-```
-MAVMAPRTLVLLLSGALALTQTWA:LLFGYPVYV
-```
-
----
-
-## Step 2 - Generate PDB Structure
-
-Running the script produces:
-
-```
-predicted_complex.pdb
-```
-
----
-
-## Step 3 - Visualization with PyMOL
-
-Use the provided `pymol_command`.
-
-### Example
-
-```python
-load predicted_complex.pdb
-color cyan, chain A
-color red, chain B
-show cartoon
-```
-
-This visualizes:
-
-- HLA structure  
-- Peptide binding conformation  
-- Neoantigen presentation  
-
----
-
-# Complete Integrated Workflow
-
-```
-Single-cell mutation analysis
-→ HLA typing (OptiType)
-→ DIPAN neoantigen prediction
-→ AlphaFold2 structural modeling
-→ PDB structure generation
-→ PyMOL visualization
-```
-
----
-# PART IV - Alternative Polyadenylation (APA) Analysis
-
-## Overview
-
-The APA module in RESIST quantifies alternative polyadenylation events from single-cell RNA-seq data and evaluates differential 3′ UTR usage between groups.
-
-APA analysis is performed using:
-
-- **scUTRquant**  
-  https://github.com/Mayrlab/scUTRquant  
-
-Downstream processing computes relative expression (RE), differential APA events, and cell type-specific APA shifts.
-
----
-
-## Step 1 - Identify Library Kit Version
-
-Before running scUTRquant, determine the 10x Genomics library kit version.
-
-Run:
-
-```bash
-python find_kit_version.py list.txt
-```
-
-### Input
-
-`list.txt`
-
-A text file containing one sample directory per line.
-
-Example:
-
-```
-/path/to/sample1
-/path/to/sample2
-```
-
-### Output
-
-`kit.csv`
-
-This file records inferred kit versions for each sample.
-
----
-
-## Step 2 - Configure scUTRquant
-
-Fill in the following files:
-
-- `config.yaml`
-- `sample_sheet.csv`
-
-Using:
-
-- Kit information from `kit.csv`
-- Sample metadata
-- Reference transcriptome path
-- Output directory
-
-Example configuration files are provided in the repository.
-
----
-
-## Step 3 - Run scUTRquant
-
-After configuration:
-
-```bash
-cd scUTRquant
-snakemake --use-conda --configfile examples/config.yaml
-```
-
-This step performs:
-
-- Proximal and distal poly(A) site quantification  
-- Transcript-level abundance estimation  
-- APA isoform assignment  
-
----
-
-## Step 4 - Locate Output Files
-
-After successful execution, results are generated under the configured output directory (e.g., `data/`).
-
-The primary output file used for downstream analysis is:
-
-```
-GSE261898.txs.Rds
-```
-
-This file contains transcript-level quantification results.
-
----
-
-## Step 5 - Downstream APA Processing and Visualization
-
-Use the provided R script:
-
-```
-APA_processing_graph.R
-```
-
-Run in R:
-
-```r
-source("APA_processing_graph.R")
-```
-
-This script performs:
-
-- Relative expression (RE) calculation  
-- Differential APA analysis  
-- Cell type-specific APA comparison  
-- APA shift visualization  
-
----
-
-## APA Output
-
-The APA module generates:
-
-- RE matrices  
-- Differential APA statistics  
-- APA shift visualizations  
-- Processed APA summary tables  
-
----
-
-## Integrated APA Workflow
-
-```
-Processed 10x data
-→ find_kit_version.py
-→ config.yaml + sample_sheet.csv
-→ scUTRquant run
-→ GSE261898.txs.Rds
-→ APA_processing_graph.R
-→ APA results and figures
-```
-
-
+`data/example/`, `data/input/`, `data/reference/`, and `data/results/` are created
+on the HPC as needed. Large files can live outside this package: set absolute paths
+in `config/config.yaml`. Relative data paths resolve against the package root.
+The original analysis filenames and A1–D6 numbering are retained for traceability.
+
+## Results and reproducibility
+
+[The output catalog](docs/outputs.md) lists products and their prerequisites.
+Each runner records the selected steps, configuration copy and hash, R/package
+versions, step logs, and new/updated output filenames and SHA-256 hashes under
+`<results>/logs/`. A failed step stops the runner. A step that writes no output
+is reported explicitly.
+
+Read [HPC instructions](docs/hpc.md), [reference-data instructions](docs/references.md),
+and [scientific scope and limitations](docs/methods-and-limitations.md) before
+extending the example to new cohorts. The inherited methods remain exploratory
+associations; this reorganization does not establish causal resistance mechanisms
+or validate candidate drugs, variants, or neoantigens.
+
+## Citation and release record
+
+Cite the RESIST resource, the original datasets, and the tools used in your run.
+[CITATION.cff](CITATION.cff) preserves the supplied resource metadata; publication
+and author details should be completed by the project authors before publication.
+See [release notes](docs/release-notes.md), the [file migration map](docs/migration.tsv),
+and the [validation record](docs/validation.md) for what changed and what remains
+to test on the HPC.

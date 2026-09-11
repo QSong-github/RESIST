@@ -1,0 +1,2 @@
+sample_id,file_type,files
+GSE233766-group8-sensitive-1,bam,/path/to/cellranger/<sample>/outs/possorted_genome_bam.bam

@@ -1,0 +1,92 @@
+# =============================================================================
+# RESIST - project configuration
+# =============================================================================
+# Every R entry point in Module A-D reads this file through
+# `scripts/lib/init.R`. Relative paths are resolved against the repository root
+# (the directory that contains this `config/` folder); absolute paths are used
+# as given, which is the intended way to point the pipeline at data or
+# reference bundles that live on a shared filesystem.
+# =============================================================================
+
+project:
+  name: RESIST
+  description: >-
+    Single-cell and spatial omics resource for the regulatory mechanisms of
+    cancer drug resistance.
+  url: https://resist.website/
+
+# -----------------------------------------------------------------------------
+# Directory layout
+# -----------------------------------------------------------------------------
+paths:
+  # Annotated Seurat objects (*.rds / *.RDS), one file per dataset.
+  data: data/input
+  # Spatial Seurat objects; kept in a sub-directory so that the single-cell
+  # entry points, which glob `paths.data` non-recursively, do not pick them up.
+  spatial_data: data/spatial
+  # Reference databases and annotation files shipped with, or downloaded into,
+  # this repository (see `docs/references.md`).
+  ref_data: data/reference
+  # Root of all generated output. Each module writes to `results/<module>/`.
+  results: data/results
+
+# -----------------------------------------------------------------------------
+# Reference files, resolved relative to `paths.ref_data`
+# -----------------------------------------------------------------------------
+reference_files:
+  emt_gmt_human:     HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION.v2024.1.Hs.gmt
+  emt_gmt_mouse:     HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION.v2024.1.Mm.gmt
+  epithelial_marker: epi.marker.csv
+  rbp_target_dir:    All_RBP_TargetGene
+  rbp_list_mouse:    mouse_RBP_list.csv
+  mirdb:             miRDB_v6.0_prediction_result.txt   # download, see docs/references.md
+  lincs_level4_rds:  GSE70138_LINCS_Level4.rds          # build locally, see docs/references.md
+  biomart_human:     mart_h.rds
+  biomart_mouse:     mart_m.rds
+  gene_map_human:    all_mappings_h.csv
+  gene_map_mouse:    all_mappings_m.csv
+  drug_metadata:     DRM9_drug_enrichment_metadata.csv
+
+# -----------------------------------------------------------------------------
+# Dataset hold-out lists
+# -----------------------------------------------------------------------------
+# Datasets with paired pre-/on-treatment sampling are analysed by a dedicated
+# longitudinal workflow and are therefore skipped by the cross-sectional
+# (pre-sensitive vs post-resistant) entry points.
+#
+# NOTE FOR MAINTAINERS: the two lists below are not interchangeable. They were
+# inherited verbatim from the original scripts, which carried two different
+# hold-out sets under the same variable name: entry points A1/A2/B1/B4 used the
+# `*_seu.rds` set, while B5 (EMT) used the `*_seurat_afterAnno.RDS` set. Both
+# are preserved so that current behaviour is reproducible; reconciling them is
+# tracked in `docs/repository-guide.md` (Known issues).
+datasets:
+  paired_pre_post_seu:
+    - GSE120575_anti_PD1_seu.rds
+    - GSE120575_anti_CTLA4_PD1_seu.rds
+    - GSE123813_bcc_pembrolizumab_seu.rds
+    - GSE123813_scc_pembrolizumab_seu.rds
+    - GSE123813_scc_cemiplimab_seu.rds
+    - GSE261898_seu.rds
+
+  paired_pre_post_anno:
+    - GSE111014_seurat_afterAnno.RDS
+    - GSE161195_seurat_afterAnno.RDS
+    - GSE161801_IMiD_seurat_afterAnno.RDS
+    - GSE161801_PI_seurat_afterAnno.RDS
+    - GSE162117_seurat_afterAnno.RDS
+    - GSE199333_seurat_afterAnno.RDS
+
+  # Datasets integrated with Harmony; excluded from the default DEG contrast
+  # because the batch-corrected embedding requires a different comparison.
+  harmony_integrated:
+    - GSE223779_crizotinib_seu.rds
+    - GSE223779_alectinib_seu.rds
+    - GSE233766_1uPLX_seu.rds
+
+# -----------------------------------------------------------------------------
+# Figure defaults
+# -----------------------------------------------------------------------------
+figures:
+  formats: [pdf, png]
+  dpi: 300

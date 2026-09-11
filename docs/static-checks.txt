@@ -1,0 +1,11 @@
+PASS: Python AST parsing: 6 files; none executed
+PASS: Bash syntax parsing: 10 files; no jobs submitted
+PASS: R parsing: 25 files; analysis expressions not evaluated
+PASS: A-D --list/--help from /tmp, using package path with spaces; no input loading
+PASS: Invalid module step and reversed B2/B1 order rejected before R execution
+PASS: Step manifest: 15 R entries resolve to existing scripts
+PASS: Markdown links: 38 relative file/heading links resolve; historical map excluded
+PASS: Migration targets and release hashes: 188 source-file records
+PASS: Exactly 4 top-level folders; no populated example, expanded reference, or results tree
+PASS: YAML parsing: 5 environment/configuration/template files; no installation or analysis execution
+PASS: Original-to-archive byte comparison: 119 reference files unchanged

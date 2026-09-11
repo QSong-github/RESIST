@@ -1,0 +1,22 @@
+# =============================================================================
+# RESIST | Module D - APA cohort configuration
+# =============================================================================
+# Consumed by scripts/D/D3_apa_quantification_and_plots.R.
+# Override the location with the RESIST_APA_CONFIG environment variable to
+# process several cohorts without editing this file.
+# =============================================================================
+
+# Label for this cohort; also the name of the output directory under
+# data/results/D/APA/
+cohort_id: GSE131984_JQ1Pal_mixed
+
+# Custom UTROME GTF used for poly(A)-site coordinate mapping. Shipped with
+# scUTRquant under extdata/targets/<target>/.
+gff_path: /path/to/scUTRquant/extdata/targets/utrome_hg38_v1/utrome.e30.t5.gc39.pas3.f0.9999.w500.gtf
+
+# Reference Seurat object (.RData) carrying the cell-type annotation that APA
+# results are stratified by.
+annotation_seurat_path: /path/to/GSE131984_JQ1Pal_seurat_afterAnno.RData
+
+# Sample registry; relative paths resolve against the repository root.
+sample_sheet: config/apa_samples.csv

@@ -1,0 +1,202 @@
+{
+  "version": "v3_02",
+  "defaults": {
+    "A": [
+      "A1"
+    ],
+    "B": [
+      "B1",
+      "B4"
+    ],
+    "C": [
+      "C7",
+      "C8"
+    ],
+    "D": [
+      "D3"
+    ]
+  },
+  "shared_packages": [
+    "yaml",
+    "jsonlite",
+    "tidyverse",
+    "Seurat",
+    "patchwork",
+    "stringr",
+    "ggsci",
+    "R.utils",
+    "scales",
+    "tibble"
+  ],
+  "steps": {
+    "A1": {
+      "script": "scripts/A/A1_umap_and_composition.R",
+      "title": "UMAP and cluster composition",
+      "requires": "Seurat object with condition, cell type, clusters and UMAP",
+      "outputs": "<input_filename>_UMAP.pdf/png",
+      "packages": [],
+      "references": []
+    },
+    "A2": {
+      "script": "scripts/A/A2_cell_cell_communication.R",
+      "title": "CellChat communication",
+      "requires": "SCT assay, sample labels, multiple cell types in both conditions",
+      "outputs": "*circle_sensitive_resistant.pdf/png; *_cellchat_*.pdf/png",
+      "packages": [
+        "CellChat",
+        "cowplot"
+      ],
+      "references": []
+    },
+    "A3": {
+      "script": "scripts/A/A3_spatial_distribution.R",
+      "title": "Spatial distribution",
+      "requires": "Study-specific spatial objects with image/coordinate data",
+      "outputs": "spatial_plots/*.pdf/png",
+      "packages": [],
+      "references": []
+    },
+    "B1": {
+      "script": "scripts/B/B1_differential_expression.R",
+      "title": "Differential expression",
+      "requires": "Annotated Seurat object; >=3 cells per condition within a cell type",
+      "outputs": "<dataset>_deg.csv; <dataset>_deg.sig.csv; <dataset>_deg_Tumor_cells_volcano.pdf/png",
+      "packages": [],
+      "references": []
+    },
+    "B2": {
+      "script": "scripts/B/B2_pathway_enrichment.R",
+      "title": "GO, KEGG and Hallmark enrichment",
+      "requires": "B1 significant tables; human annotations; internet/database access",
+      "outputs": "*_deg.sig_{GO,KEGG,Hallmark}_enrichment_{up,dn}.csv",
+      "packages": [
+        "clusterProfiler",
+        "org.Hs.eg.db",
+        "org.Mm.eg.db",
+        "msigdbr"
+      ],
+      "references": []
+    },
+    "B3": {
+      "script": "scripts/B/B3_pathway_enrichment_barplot.R",
+      "title": "Pathway enrichment plots",
+      "requires": "B2 tables; nonempty eligible pathways",
+      "outputs": "*_{GO,KEGG,HALLMARK}_barchart_sideByside.pdf/png",
+      "packages": [
+        "clusterProfiler",
+        "org.Hs.eg.db",
+        "org.Mm.eg.db",
+        "msigdbr"
+      ],
+      "references": []
+    },
+    "B4": {
+      "script": "scripts/B/B4_intratumor_heterogeneity.R",
+      "title": "Intratumor heterogeneity",
+      "requires": "Tumor cells in both conditions; >=20 existing PCA components",
+      "outputs": "<input_filename>_ITH_box.pdf/png",
+      "packages": [],
+      "references": []
+    },
+    "B5": {
+      "script": "scripts/B/B5_emt_score.R",
+      "title": "EMT scoring",
+      "requires": "Tumor cells; normalized expression; human EMT GMT",
+      "outputs": "<input_filename>_EMT_box.pdf/png",
+      "packages": [
+        "GSVA",
+        "GSEABase"
+      ],
+      "references": [
+        "emt_gmt_human"
+      ]
+    },
+    "B6": {
+      "script": "scripts/B/B6_drug_enrichment.R",
+      "title": "LINCS signature connectivity",
+      "requires": "B1 significant tables; large LINCS RDS; high-memory node",
+      "outputs": "*_drug_enrichment.csv",
+      "packages": [
+        "cytolib",
+        "flowCore",
+        "cmapR",
+        "fgsea",
+        "devtools"
+      ],
+      "references": [
+        "lincs_level4_rds"
+      ]
+    },
+    "B7": {
+      "script": "scripts/B/B7_drug_enrichment_plot.R",
+      "title": "Drug connectivity plots",
+      "requires": "B6 tables",
+      "outputs": "*_drug_enrichment_bar.pdf/png",
+      "packages": [],
+      "references": []
+    },
+    "C7": {
+      "script": "scripts/C/C7_rbp_target_enrichment.R",
+      "title": "RBP target enrichment",
+      "requires": "B1 full DEG tables; bundled human RBP targets",
+      "outputs": "*_deg_rbp_enrichment.csv",
+      "packages": [],
+      "references": [
+        "rbp_target_dir"
+      ]
+    },
+    "C8": {
+      "script": "scripts/C/C8_rbp_bubble_plot.R",
+      "title": "RBP circle plots",
+      "requires": "C7 tables; significance/count filters may produce no plot",
+      "outputs": "*_deg_rbp_enrichment_{up,dn}_circle.pdf/png",
+      "packages": [
+        "viridis",
+        "packcircles",
+        "ggrepel"
+      ],
+      "references": []
+    },
+    "C9": {
+      "script": "scripts/C/C9_mirna_target_enrichment.R",
+      "title": "miRNA target enrichment",
+      "requires": "B1 significant tables; miRDB and mapping references",
+      "outputs": "*_deg.sig_{up,dn}_miRNA.csv",
+      "packages": [
+        "biomaRt"
+      ],
+      "references": [
+        "mirdb",
+        "biomart_human",
+        "biomart_mouse",
+        "gene_map_human",
+        "gene_map_mouse"
+      ]
+    },
+    "C10": {
+      "script": "scripts/C/C10_mirna_treemap_plot.R",
+      "title": "miRNA treemaps",
+      "requires": "C9 tables; nonempty significant miRNA results",
+      "outputs": "*_miRNA_{up,dn}.pdf/png",
+      "packages": [
+        "treemap",
+        "RColorBrewer",
+        "treemapify"
+      ],
+      "references": []
+    },
+    "D3": {
+      "script": "scripts/D/D3_apa_quantification_and_plots.R",
+      "title": "APA quantification and plots",
+      "requires": "Actual scUTRquant TXS, 10x matrices, annotation Seurat, GTF and APA sample sheet",
+      "outputs": "APA/<cohort>/RE_outputs/*; mapping_diagnostics.csv; RE_Differential_Analysis_Results.csv; ECDF/violin plots",
+      "packages": [
+        "SingleCellExperiment",
+        "GenomicRanges",
+        "rtracklayer",
+        "Matrix"
+      ],
+      "references": []
+    }
+  }
+}

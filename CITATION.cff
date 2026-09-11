@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use RESIST, please cite the following."
+title: "RESIST: a single-cell and spatial omics resource of regulatory mechanisms underlying cancer drug resistance"
+abstract: >-
+  RESIST is a large-scale single-cell and spatial omics resource that
+  systematically characterizes the regulatory mechanisms underlying cancer
+  drug resistance across 81 scRNA-seq and 7 spatial transcriptome datasets,
+  522 single-cell and 96 spatial samples, 13 cancer types and 59 drug
+  regimens.
+url: "https://resist.website/"
+type: software
+authors:
+  - name: "The RESIST authors"
+keywords:
+  - drug resistance
+  - single-cell transcriptomics
+  - spatial transcriptomics
+  - neoantigen
+  - alternative polyadenylation
+version: "v3_02"

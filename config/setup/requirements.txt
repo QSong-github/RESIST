@@ -1,0 +1,14 @@
+# =============================================================================
+# RESIST | Python dependencies for the Module C and Module D command-line tools
+#   python -m venv .venv && source .venv/bin/activate
+#   pip install -r config/setup/requirements.txt
+# -----------------------------------------------------------------------------
+# Module D's structure prediction (D5) additionally needs ColabFold, and its
+# visualisation step (D6) needs PyMOL; both are installed separately.
+# =============================================================================
+requests>=2.31
+beautifulsoup4>=4.12
+pandas>=2.0
+numpy>=1.24
+biopython>=1.81
+tqdm>=4.66
