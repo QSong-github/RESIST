@@ -28,9 +28,7 @@ Configure `config/apa_config.yaml` and `config/apa_samples.csv` as described in
 [tutorial Step 7](../TUTORIAL.md#step-7--module-d-with-a-separately-prepared-apa-cohort):
 
 ```bash
-bash run_D.sh --config config/config.yaml \
-  --apa-config config/apa_config.yaml --check
-bash run_D.sh --config config/config.yaml \
+bash scripts/run_D.sh --config config/config.yaml \
   --apa-config config/apa_config.yaml
 ```
 

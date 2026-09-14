@@ -11,10 +11,9 @@ not create a fully annotated dataset from raw reads.
 | A3 | Spatial Seurat objects with `final_celltype`, `group`, `sample`, images/coordinates | `spatial_plots/*_spatial_cell_distribution_{sensitive,resistant}_top2.pdf/png` | Study-specific spatial template |
 
 ```bash
-bash run_A.sh --config config/example.yaml          # A1
-bash run_A.sh --config config/config.yaml --steps A2 --check
-bash run_A.sh --config config/config.yaml --steps A2
-bash run_A.sh --config config/config.yaml --steps A3 --check
+bash scripts/run_A.sh --config config/example.yaml          # A1
+bash scripts/run_A.sh --config config/config.yaml --steps A2
+bash scripts/run_A.sh --config config/config.yaml --steps A3
 ```
 
 A1's composition panel compares cluster percentages within condition using grouped

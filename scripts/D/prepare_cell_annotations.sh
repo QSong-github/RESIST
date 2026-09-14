@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
-# RESIST | scripts/utils
-# merge_cellranger_annotations.sh
+# RESIST | Module D input preparation
+# prepare_cell_annotations.sh
 # -----------------------------------------------------------------------------
 # Purpose  : Join a Cell Ranger graph-based clustering table with its t-SNE
 #            projection and prefix each barcode with the run accession, producing the
@@ -9,7 +9,7 @@
 # Inputs   : <cellranger_outs>/analysis/clustering/gene_expression_graphclust/clusters.csv
 #            <cellranger_outs>/analysis/tsne/gene_expression_2_components/projection.csv
 # Outputs  : <out_dir>/<accession>_annots.csv - cell_id, cluster, tsne_1, tsne_2
-# Usage    : bash merge_cellranger_annotations.sh <cellranger_outs> <accession> <out_dir>
+# Usage    : bash scripts/D/prepare_cell_annotations.sh <cellranger_outs> <accession> <out_dir>
 # Origin   : APA_analysis/Untitled-1.sh (four repeated join commands)
 # Notes    : The original wrote every sample to the same `annots.csv`, so only the
 #            last one survived; the output name now carries the accession.

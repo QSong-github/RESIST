@@ -55,7 +55,7 @@ Paths below are relative to the configured results root. For the worked example,
 
 ## Run record
 
-`<results>/logs/<run_id>/` contains `config.yaml`, `preflight.txt`, one `.log` per executed step, and `run.json`; D also copies its APA configuration. The JSON records script/config/output hashes and exact files written during each step. Input MD5 values and R package versions are reported by the applicable preflight. It is not a complete reference/database snapshot.
+`<results>/logs/<run_id>/` contains `config.yaml`, `software.json`, one `.log` per executed step, and `run.json`; D also copies its APA configuration. The JSON records script/config/output hashes and exact files written during each step. The software record contains the R session, library paths, and installed-package versions. Input and reference checksums must be recorded separately as described in the tutorial; the runner does not read large inputs merely to hash them.
 
 ## Filenames and absent outputs
 
@@ -64,3 +64,7 @@ Paths below are relative to the configured results root. For the worked example,
 C8 can write no figures because of its significance/count gates; consult the tutorial. Similar filtering and missing features can affect other plots. A launcher record of `no_new_outputs` identifies that no files were newly written; it does not by itself prove a biologically null result.
 
 See the [tutorial](../TUTORIAL.md) for exact example filenames and the [module guides](../README.md#analysis-modules) for branch-specific detail.
+
+The R installer writes `installed-packages.csv`, `sessionInfo.txt`, and
+`software-checks.txt` under `data/results/setup/<UTC timestamp>-<process id>/`.
+A failed check produces a report with failed status, not a success certificate.

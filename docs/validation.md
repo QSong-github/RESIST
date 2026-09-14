@@ -1,7 +1,8 @@
 # Validation record
 
-**Scope:** documentation, release identity, static syntax,
-launcher interfaces, path/manifest consistency, and packaging integrity.
+**Scope:** documentation, release identity, syntax, relocated launcher behavior,
+installer dependency coverage and utility checks, path/manifest consistency, and
+packaging integrity.
 No analysis workflows, environment installation, SLURM jobs, or large external
 reference downloads were executed during this package update.
 
@@ -12,19 +13,23 @@ reference downloads were executed during this package update.
 | Release consistency | `VERSION`, citation metadata, and the step manifest agree; all A–D `--version` responses identify the same package |
 | Version cleanup | Active guides use no RESIST release-number labels; package metadata agrees; independent tool/reference/chemistry identifiers retain their exact values |
 | README clarity | No numbered script IDs; A–D descriptions state default outputs, file formats, destinations, and input dependencies |
-| Analysis preservation | All analysis and launcher scripts are byte-identical to the preceding package |
+| Analysis preservation | All A–D scientific analysis files are byte-identical to the preceding package; the launcher and installer were updated |
 | Python parsing | 6 files parsed with the Python AST parser; analysis scripts not imported or executed |
-| R parsing | 25 files parsed without evaluating analysis expressions |
-| Shell parsing | 10 shell/SLURM files checked with `bash -n` |
-| Root runner interfaces | A/B/C/D `--list`, `--help`, and `--version` exercised from `/tmp`, including a package path containing spaces |
-| Invalid requests | Cross-module steps and reversed B2/B1 order rejected before R execution |
+| R parsing | 24 files parsed; all 23 retained analysis/shared R files have unchanged parsed expressions |
+| Shell parsing | 9 shell/SLURM files checked with `bash -n` |
+| Relocated launcher interfaces | A/B/C/D `--list`, `--help`, and `--version` exercised from `/tmp`, including a package path containing spaces |
+| Launcher behavior | Temporary fixtures verified A–D dispatch, relative/absolute paths with spaces, step failure propagation, no-output status, configuration snapshots, and output hashes |
+| Invalid requests | Cross-module/duplicate steps, reversed dependencies, missing APA configuration, and the removed launcher check option are rejected |
+| Configuration metadata | The actual R expression reads YAML/software metadata and rejects malformed result paths without loading study inputs |
+| CellChat dependencies | Installer lists all required Depends/Imports/LinkingTo packages in the verified pinned source; Bioconductor dependencies are explicitly separated |
+| Installer utilities | A child-R probe distinguishes a working base package from a missing one; source checks reject missing/mismatched CellChat revisions; help exits without installation; paths with spaces work and a wrong conda R is rejected before changes |
 | Step manifest | 15 selectable R entries resolve to existing scripts; default selections are unchanged |
 | Structured files | Environment/configuration/template YAML, citation metadata, and step JSON parse successfully |
 | Local documentation | Active Markdown file/heading links and HTML image/navigation links resolve |
-| Main workflow figure | Identical to the supplied image |
+| Main workflow figure | Supplied Fig1.pdf preserved byte-for-byte; its single page rendered to a 2520 × 2600 PNG and visually inspected |
 | Source traceability | 188 original files accounted for in the migration map, with current target hashes verified |
 | Bundled references | 119 files preserved byte-for-byte inside the compressed reference archive |
-| Historical records | Earlier documentation retained in a separate provenance archive |
+| Historical records | Earlier documentation and two retired support scripts retained in the provenance archive |
 | Package contents | Exactly 4 top-level folders; no populated example, input, expanded-reference, or biological-result directories |
 
 The detailed local check output is saved in [static-checks.txt](static-checks.txt).
@@ -52,6 +57,10 @@ enrichment results, analysis figures, or measured workflow runtimes are supplied
 ## Deferred to HPC acceptance testing
 
 - Resolve the specified package environment and record its exact versions.
+- Execute the installer’s full package/API and small-object checks in that
+  environment. These full checks were added for HPC use, not executed locally.
+- Confirm the pinned CellChat installs after its Bioconductor dependencies,
+  especially BiocNeighbors; review any remaining compiler or conda errors.
 - Download and inspect the current shared example; preserve its checksum.
 - Execute A1, then B1/B4, then C7/C8, inspecting each table and figure.
 - Check empty/significance-filtered results and active-assay behavior.
@@ -63,6 +72,6 @@ enrichment results, analysis figures, or measured workflow runtimes are supplied
 - Compare numerical outputs with an authoritative reference analysis before
   describing a run as reproducing published results.
 
-Static success establishes a consistent package layout and readable syntax.
-It does not establish dependency compatibility, correct barcode mapping,
+The completed checks establish a consistent layout and selected launcher/installer
+behaviors. They do not establish full dependency compatibility, correct barcode mapping,
 numerical equivalence, or scientific validity for a particular cohort.

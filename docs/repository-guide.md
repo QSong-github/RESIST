@@ -1,7 +1,8 @@
 # Repository guide
 
 Read the root [README](../README.md) and [tutorial](../TUTORIAL.md) first.
-The four root runners share one Python dispatcher and one R preflight script.
+The four launchers in `scripts/` share one Python dispatcher. Each selected
+analysis runs in its own R process, with software metadata and output logs.
 
 | Location | Responsibility |
 |---|---|
@@ -13,7 +14,8 @@ The four root runners share one Python dispatcher and one R preflight script.
 | `config/slurm/submit_module.sbatch` | One-module SLURM submission template |
 | `scripts/A/` … `scripts/D/` | Analysis entry points, flattened within each module |
 | `scripts/lib/` | R configuration, metadata compatibility, palettes, common I/O, CellChat plotting helper |
-| `scripts/utils/` | Legacy manual utilities; not invoked automatically |
+| `scripts/run_A.sh` … `scripts/run_D.sh` | Module launchers; share `scripts/run_module.py` |
+| `scripts/D/prepare_cell_annotations.sh` | Optional annotation-table preparation for sequencing inputs |
 | `data/reference_bundle.tar.gz` | Compressed supplied references |
 | `data/templates/` | Small sequencing/APA/structure examples, not production inputs |
 | `docs/` | Human-readable method, output, HPC, and release records |
@@ -25,7 +27,7 @@ explicit while keeping additional analyses accessible with `--steps`. There is n
 The shared R initialization resolves paths and exposes `PATH_DATA`, `PATH_SPATIAL`,
 `PATH_REF`, `PATH_RESULTS`, `RESULTS_A` through `RESULTS_D`, `resist_ref()`, and
 output/palette helpers. Result paths are created when used. `RESIST_CONFIG` and
-`RESIST_APA_CONFIG` support direct-script deployments; the root launchers set them
+`RESIST_APA_CONFIG` support direct-script deployments; the module launchers set them
 from the command-line options.
 
 To add a step, retain the bootstrap used by the neighboring script, write outputs
@@ -40,7 +42,7 @@ path/organization changes.
 and saved in `run.json`. Read it without loading data or R packages:
 
 ```bash
-bash run_A.sh --version
+bash scripts/run_A.sh --version
 ```
 
 `CITATION.cff` and `config/steps.json` carry matching release metadata.
@@ -56,7 +58,8 @@ file inside an archive. Retired wrappers and empty placeholders have no
 current target and carry an explicit reason. Original filenames in the
 source column remain unchanged for provenance.
 
-The [source-history archive](source-history.tar.gz) preserves earlier layout,
+The [source-history archive](source-history.tar.gz) preserves retired support
+scripts and earlier layout,
 migration, release, and validation records. Its contents describe historical
 states and are not current execution instructions. Use the active guides in
 this directory and the [package update notes](release-notes.md) for this package.

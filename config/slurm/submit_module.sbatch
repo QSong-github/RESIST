@@ -17,4 +17,4 @@ case "$module_id" in A|B|C|D) ;; *) echo "Module must be A, B, C, or D" >&2; exi
 cd "$RESIST_HOME"
 command -v Rscript >/dev/null
 command -v python3 >/dev/null
-exec bash "$RESIST_HOME/run_${module_id}.sh" "$@"
+exec bash "$RESIST_HOME/scripts/run_${module_id}.sh" "$@"

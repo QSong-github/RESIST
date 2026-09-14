@@ -45,16 +45,23 @@ compute allocation; perform analysis on a compute node.
 cd /your/HPC/project/RESIST
 conda env create -f config/setup/environment.yml
 conda activate resist
-Rscript config/setup/install_r_packages.R
+Rscript --vanilla config/setup/install_r_packages.R
 python3 --version
 Rscript --version
 ```
 
 Replace `/your/HPC/project/RESIST` once with your actual location. The supplied
 environment is an installation specification, not a fully resolved lockfile.
-The R installer adds missing CRAN/Bioconductor packages and CellChat. It downloads
-software dependencies, not the large reference datasets. Resolve any installation
-errors with the HPC's supported compiler/R environment before running analyses.
+The R installer adds missing CRAN/Bioconductor dependencies, installs a fixed
+CellChat source revision, and checks package loading plus small in-memory objects.
+In an active conda environment it installs into that environment’s R library and
+prints the destination. Reports are saved under `data/results/setup/`.
+
+**Checkpoint:** the installer must finish with `R software checks passed` and exit
+successfully. A missing dependency or failed software check stops it. Software
+checks do not validate biological inputs or reproduce published results. See
+[CellChat installation](docs/hpc.md#cellchat-installation) for the reported
+BiocNeighbors error and a repair command for an existing environment.
 
 Python 3 is used by the module launcher. The dependencies in
 `config/setup/requirements.txt` are needed only for the separate Python analysis
@@ -136,12 +143,10 @@ as part of A1. Do not regenerate those steps merely to match a screenshot.
 ## Step 4 — A: inspect the embedding and cluster composition
 
 ```bash
-bash run_A.sh --config config/example.yaml --check
-bash run_A.sh --config config/example.yaml
+bash scripts/run_A.sh --config config/example.yaml
 ```
 
-`--check` reads prerequisites and reports the object and package versions without
-running A1. The second command executes A1 and writes:
+This command reads the example object and writes:
 
 ```text
 data/results/example/A/
@@ -166,8 +171,7 @@ plot. A2 and A3 are not part of the default run.
 ## Step 5 — B: obtain differential expression and heterogeneity
 
 ```bash
-bash run_B.sh --config config/example.yaml --check
-bash run_B.sh --config config/example.yaml
+bash scripts/run_B.sh --config config/example.yaml
 ```
 
 This runs B1 followed by B4. Expected products are:
@@ -218,8 +222,7 @@ C uses the B1 table in the **same output profile**. Run B first; changing the
 results path between B and C breaks that dependency.
 
 ```bash
-bash run_C.sh --config config/example.yaml --check
-bash run_C.sh --config config/example.yaml
+bash scripts/run_C.sh --config config/example.yaml
 ```
 
 Expected main table:
@@ -266,12 +269,10 @@ the A–C example rather than fabricating FASTQ, APA, or HLA results.
    `annotation_seurat_path`, and `sample_sheet` to real HPC paths.
 4. Replace every placeholder row in `config/apa_samples.csv`. Required columns are
    `sample_id,group,tenx_dir,txs_rds`; use one row per actual sample.
-5. Check before executing, then run D3:
+5. Review the sample sheet and file paths, then run the APA analysis:
 
 ```bash
-bash run_D.sh --config config/config.yaml \
-  --apa-config config/apa_config.yaml --check
-bash run_D.sh --config config/config.yaml \
+bash scripts/run_D.sh --config config/config.yaml \
   --apa-config config/apa_config.yaml
 ```
 
@@ -284,20 +285,19 @@ Expected products under `data/results/D/APA/<cohort_id>/` include
 `RE_outputs/*_RE_gene_by_cell.rds`, `RE_outputs/*_RE_mean.csv`,
 `sce_barcode_to_seurat_mapping.csv`, `mapping_diagnostics.csv`, and
 `RE_Differential_Analysis_Results.csv`, with eligible ECDF/violin figures.
-The path check does not validate all TXS internals or barcode mapping. That is
-part of your HPC acceptance testing. See [Module D](docs/module-d.md) for the
+Validate TXS contents and barcode mapping as part of HPC acceptance testing. See [Module D](docs/module-d.md) for the
 separate HLA and structural workflows.
 
 ## Step 8 — Add only the analyses needed for your question
 
 | Extension | Command after preparing its inputs | Additional requirement |
 |---|---|---|
-| Pathway tables and plots | `bash run_B.sh --config config/example.yaml --steps B2,B3` | B1 outputs; human annotations; database/network access |
-| EMT plot | `bash run_B.sh --config config/example.yaml --steps B5` | GSVA/GSEABase and the bundled human EMT gene set |
-| miRNA tables and treemaps | `bash run_C.sh --config config/example.yaml --steps C9,C10` | B1 outputs; separately downloaded miRDB reference |
-| LINCS connectivity | `bash run_B.sh --config config/example.yaml --steps B6,B7` | Large LINCS RDS and a high-memory HPC allocation |
+| Pathway tables and plots | `bash scripts/run_B.sh --config config/example.yaml --steps B2,B3` | B1 outputs; human annotations; database/network access |
+| EMT plot | `bash scripts/run_B.sh --config config/example.yaml --steps B5` | GSVA/GSEABase and the bundled human EMT gene set |
+| miRNA tables and treemaps | `bash scripts/run_C.sh --config config/example.yaml --steps C9,C10` | B1 outputs; separately downloaded miRDB reference |
+| LINCS connectivity | `bash scripts/run_B.sh --config config/example.yaml --steps B6,B7` | Large LINCS RDS and a high-memory HPC allocation |
 
-Append `--check` first for any extension. See [references](docs/references.md)
+Review the input requirements before each extension. See [references](docs/references.md)
 for what is bundled and what must be obtained separately. Variant, communication,
 spatial, and immunogenomic workflows need additional data; merely selecting their
 step IDs does not create those inputs.
@@ -305,7 +305,7 @@ step IDs does not create those inputs.
 ## Step 9 — Review and preserve the run
 
 Each executed module creates a unique directory at
-`<results>/logs/<UTC_timestamp>-<module>-<id>/`. It contains `preflight.txt`, a
+`<results>/logs/<UTC_timestamp>-<module>-<id>/`. It contains `software.json` (R session and installed-package versions), a
 configuration snapshot, per-step `.log` files, and `run.json`. The JSON records
 completed/failed/no-output steps and the paths, sizes, and SHA-256 hashes of files
 written in that run. Previous result files stay in the output directory; use a
@@ -322,6 +322,7 @@ to submit each module as a job.
 
 | Symptom | Check and next action |
 |---|---|
+| Missing BiocNeighbors / CellChat | Use the updated R installer; BiocNeighbors comes from Bioconductor. See the [HPC guide](docs/hpc.md#cellchat-installation). |
 | No `.rds` inputs found | Check `paths.data`, the directory level, and filename extension. |
 | R reports an invalid input format | Inspect the file size/type; a Drive HTML response is not an RDS. |
 | Conflicting cell-type columns | Reconcile `celltype` and `cell_type` with the source annotation; do not keep contradictory labels. |

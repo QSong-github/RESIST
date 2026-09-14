@@ -30,9 +30,9 @@ worked example. Processed data and results can be explored through the
 ## Workflow
 
 <p align="center">
-  <img src="docs/figures/resist_overview.png"
+  <a href="docs/figures/Fig1.pdf"><img src="docs/figures/resist_overview.png"
        alt="RESIST workflow: data collection and curation; characterization, transcriptional, regulatory, and immunogenomic analyses; and an interactive database with downloadable results."
-       width="1100"/>
+       width="1100"/></a>
 </p>
 
 **Figure 1. RESIST workflow.** Curated single-cell and spatial datasets support
@@ -41,11 +41,12 @@ transcriptional, regulatory, and immunogenomic analyses. The web interface
 supports interactive browsing, visualization, and access to data and results.
 The figure summarizes the resource; individual analyses require different inputs
 and are selected according to data availability.
+[Download Figure 1 (PDF)](docs/figures/Fig1.pdf).
 
 ## Analysis modules
 
 | Module | Biological focus | Analyses and products |
-|-----|---|---|
+|---|---|---|
 | **[A · Characterization](docs/module-a.md)** | Cellular composition and organization | Existing UMAP embeddings, cluster composition by response, CellChat communication patterns, and spatial distributions |
 | **[B · Transcriptional](docs/module-b.md)** | Expression programs associated with resistance | Differentially expressed genes, GO/KEGG/Hallmark enrichment, intratumor heterogeneity, EMT scores, and LINCS signature connectivity |
 | **[C · Regulatory](docs/module-c.md)** | Candidate regulatory associations | Variant-analysis components and enrichment of RNA-binding-protein and miRNA target sets |
@@ -66,7 +67,7 @@ git clone https://github.com/QSong-github/RESIST.git RESIST
 cd RESIST
 conda env create -f config/setup/environment.yml
 conda activate resist
-Rscript config/setup/install_r_packages.R
+Rscript --vanilla config/setup/install_r_packages.R
 ```
 
 Follow [tutorial Steps 2–3](TUTORIAL.md#step-2--download-the-example-directly-onto-the-hpc)
@@ -83,7 +84,7 @@ module are described in the linked module guides.
 ### A. Characterization
 
 ```bash
-bash run_A.sh --config config/example.yaml
+bash scripts/run_A.sh --config config/example.yaml
 ```
 
 **Produces one four-panel overview figure** containing:
@@ -100,7 +101,7 @@ and spatial analyses require additional inputs; see the [Module A guide](docs/mo
 ### B. Transcriptional analysis
 
 ```bash
-bash run_B.sh --config config/example.yaml
+bash scripts/run_B.sh --config config/example.yaml
 ```
 
 **Produces differential-expression results and a heterogeneity comparison:**
@@ -124,7 +125,7 @@ Pathway, EMT, and drug-signature analyses are described in the
 **Run B first**, using the same example configuration and results directory.
 
 ```bash
-bash run_C.sh --config config/example.yaml
+bash scripts/run_C.sh --config config/example.yaml
 ```
 
 **Produces RNA-binding-protein (RBP) target-enrichment results:**
@@ -149,7 +150,7 @@ object, and the matching GTF; the shared GSE104987 example does not supply these
 inputs. Then run:
 
 ```bash
-bash run_D.sh --config config/config.yaml --apa-config config/apa_config.yaml
+bash scripts/run_D.sh --config config/config.yaml --apa-config config/apa_config.yaml
 ```
 
 **Produces alternative-polyadenylation (APA) summaries and comparisons:**
@@ -166,14 +167,16 @@ Files are saved in `data/results/D/APA/<cohort_id>/`. Review mapping diagnostics
 before interpreting the comparisons. HLA typing and peptide–MHC structural
 analysis use separate commands and inputs in the [Module D guide](docs/module-d.md).
 
-### Check inputs and select additional analyses
+### Check software and select additional analyses
 
-Use `--check` to inspect prerequisites without executing an analysis, and
-`--list` to inspect the available analyses and expected products:
+The installer finishes with small software checks for the R modules, including
+CellChat and its Bioconductor dependencies. To repeat those checks without
+installing packages, use the installer’s `--check` option. Use a launcher’s
+`--list` option to see available analyses and expected products:
 
 ```bash
-bash run_A.sh --config config/example.yaml --check
-bash run_B.sh --list
+Rscript --vanilla config/setup/install_r_packages.R --check
+bash scripts/run_B.sh --list
 ```
 
 The [tutorial](TUTORIAL.md) provides output checkpoints and extension commands.
@@ -184,11 +187,10 @@ The module guides explain individual analysis selections with `--steps`; the
 
 ```text
 RESIST/
-├── README.md                  resource overview and quick start
-├── TUTORIAL.md                step-by-step example-data walkthrough
-├── run_A.sh … run_D.sh        module entry points
+├── README.md                 resource overview and quick start
+├── TUTORIAL.md               step-by-step example-data walkthrough
 ├── config/                   paths, sample sheets, dependencies, SLURM template
-├── scripts/                  A–D analyses, shared R functions, utilities
+├── scripts/                  run_A.sh … run_D.sh, A–D analyses, shared helpers
 ├── data/                     compressed references and small input templates
 └── docs/                     workflow figure, module guides, and technical notes
 ```
@@ -271,12 +273,14 @@ compounds, and neoantigens require appropriate experimental validation.
 
 ## Reproducibility
 
-Each module runner records selected steps, configuration and script hashes,
-package versions, step logs, and the files written during the run under
+The R installer uses a fixed CellChat source revision and records resolved package
+versions and software checks. Each module runner records selected steps,
+configuration and script hashes, installed package versions, step logs, and
+the files written during the run under
 `<results>/logs/`. Failures stop execution, and steps that produce no new output
 are identified explicitly. Use a separate results path when comparing analyses
 with different inputs or settings. The [HPC guide](docs/hpc.md) covers submission
-and environment recording.
+and environment recording, including [CellChat installation troubleshooting](docs/hpc.md#cellchat-installation).
 
 ## Citation and acknowledgements
 

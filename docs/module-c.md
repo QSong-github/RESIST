@@ -14,9 +14,8 @@ implementation was supplied.
 | C10 | C9 tables | `*_miRNA_{up,dn}.pdf/png` when eligible |
 
 ```bash
-bash run_C.sh --config config/example.yaml             # C7,C8; run B first
-bash run_C.sh --config config/example.yaml --steps C9,C10 --check
-bash run_C.sh --config config/example.yaml --steps C9,C10
+bash scripts/run_C.sh --config config/example.yaml             # C7,C8; run B first
+bash scripts/run_C.sh --config config/example.yaml --steps C9,C10
 ```
 
 C7 uses genes returned in the tumor-cell DEG table as its universe and tests target
@@ -66,7 +65,7 @@ python scripts/C/C5_annotate_variants.py \
   /path/to/variant_results/input.csv /path/to/variant_results/annotated_output.csv
 ```
 
-C3–C5 are not invoked by `run_C.sh`. Confirm the reference genome, chromosome
+C3–C5 are not invoked by `scripts/run_C.sh`. Confirm the reference genome, chromosome
 convention, allele context, statistical thresholds, and annotation service
 versions before reporting variant associations.
 

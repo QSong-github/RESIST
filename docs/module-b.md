@@ -15,12 +15,11 @@ require an A1 output file.
 | B7 | `*_drug_enrichment_bar.pdf/png` | B6 results |
 
 ```bash
-bash run_B.sh --config config/example.yaml             # B1,B4
-bash run_B.sh --config config/example.yaml --steps B2,B3 --check
-bash run_B.sh --config config/example.yaml --steps B2,B3
-bash run_B.sh --config config/example.yaml --steps B5
+bash scripts/run_B.sh --config config/example.yaml             # B1,B4
+bash scripts/run_B.sh --config config/example.yaml --steps B2,B3
+bash scripts/run_B.sh --config config/example.yaml --steps B5
 # Only after obtaining LINCS and a suitable HPC allocation:
-bash run_B.sh --config config/example.yaml --steps B6,B7 --check
+bash scripts/run_B.sh --config config/example.yaml --steps B6,B7
 ```
 
 B1 tests resistant versus sensitive within each cell type using Seurat's active

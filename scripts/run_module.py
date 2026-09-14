@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run explicit RESIST steps with preflight, logs, and output provenance."""
+"""Run one RESIST module with step logs and a record of the installed software."""
 import argparse
 import datetime as dt
 import hashlib
@@ -28,7 +28,6 @@ def main():
     parser.add_argument('--steps', help='Comma-separated step IDs; use --list for choices')
     parser.add_argument('--config', type=Path, default=ROOT / 'config/config.yaml')
     parser.add_argument('--apa-config', type=Path, default=ROOT / 'config/apa_config.yaml')
-    parser.add_argument('--check', action='store_true', help='Validate only; do not run analyses')
     parser.add_argument('--list', action='store_true', help='Show steps and expected products')
     args = parser.parse_args()
     manifest = json.loads((ROOT / 'config/steps.json').read_text())
@@ -57,21 +56,52 @@ def main():
     env = dict(os.environ, RESIST_HOME=str(ROOT), RESIST_CONFIG=str(config), RESIST_APA_CONFIG=str(apa))
     env['RESIST_STEPS'] = ','.join(steps)
     print(f"RESIST {version} | Module {args.module} | Steps: {', '.join(steps)}", flush=True)
-    preflight = subprocess.run(['Rscript', str(ROOT/'scripts/preflight.R')], env=env,
-                               cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    # The final machine-readable path line is emitted only after validation passes.
-    lines = preflight.stdout.splitlines()
-    output_line = next((s for s in lines if s.startswith('RESIST_OUTPUT_ROOT=')), None)
-    print('\n'.join(s for s in lines if not s.startswith('RESIST_OUTPUT_ROOT=')), flush=True)
-    if preflight.returncode:
-        return preflight.returncode
-    if args.check:
-        print('CHECK PASSED. No analyses were run.')
-        return 0
-    if not output_line:
-        print('Preflight did not return an output directory.', file=sys.stderr)
+    # Read the result path and software metadata only; do not load study data.
+    # R reads YAML itself so path handling agrees with the analysis configuration.
+    setup = subprocess.run(['Rscript', '--vanilla', '-e', r"""
+        prefix <- Sys.getenv('CONDA_PREFIX')
+        if (nzchar(prefix)) {
+            if (!identical(normalizePath(R.home()),
+                normalizePath(file.path(prefix, 'lib/R'), mustWork=FALSE)))
+                stop('Rscript is outside the active conda environment. Activate resist.')
+            .libPaths(.Library, include.site=FALSE)
+        }
+        stopifnot(requireNamespace('yaml', quietly=TRUE),
+                  requireNamespace('jsonlite', quietly=TRUE))
+        cfg <- yaml::read_yaml(Sys.getenv('RESIST_CONFIG'))
+        path <- cfg$paths$results
+        if (!is.character(path) || length(path) != 1L || is.na(path) || !nzchar(path))
+            stop('Configuration must define one nonempty paths.results value.')
+        if (grepl('^~', path)) stop('Use an absolute path instead of ~ in paths.results.')
+        pkgs <- as.data.frame(installed.packages()[, c('Package', 'Version', 'LibPath')],
+                              stringsAsFactors=FALSE)
+        cc <- find.package('CellChat', quiet=TRUE)
+        sha <- NA_character_
+        if (length(cc)) {
+            desc <- read.dcf(file.path(cc, 'DESCRIPTION'))
+            if ('RemoteSha' %in% colnames(desc)) sha <- desc[1, 'RemoteSha']
+        }
+        cat(jsonlite::toJSON(list(results=path, CellChat_source=sha,
+            session=capture.output(sessionInfo()), packages=pkgs,
+            R_home=R.home(), libraries=.libPaths()), auto_unbox=TRUE))
+    """], env=env, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if setup.returncode:
+        print(setup.stderr, file=sys.stderr)
+        return setup.returncode
+    try:
+        software = json.loads(setup.stdout)
+        output = Path(software['results'])
+    except (ValueError, KeyError, TypeError) as exc:
+        print(f'Cannot read configuration/software metadata: {exc}', file=sys.stderr)
         return 1
-    output = Path(output_line.split('=', 1)[1])
+    if env.get('CONDA_PREFIX'):
+        env['R_LIBS_USER'] = str(Path(software['R_home']) / 'library')
+        env['R_LIBS_SITE'] = env['R_LIBS_USER']
+    if not output.is_absolute():
+        output = ROOT / output
+    output = output.resolve()
+    if args.module == 'D' and not apa.is_file():
+        parser.error(f'APA configuration does not exist: {apa}')
     run_id = dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + args.module + '-' + uuid.uuid4().hex[:6]
     logdir = output/'logs'/run_id
     logdir.mkdir(parents=True)
@@ -82,7 +112,12 @@ def main():
     if args.module == 'D':
         shutil.copy2(apa, logdir/'apa_config.yaml')
         report['apa_config_sha256'] = digest(apa)
-    (logdir/'preflight.txt').write_text(preflight.stdout)
+    (logdir/'software.json').write_text(json.dumps(software, indent=2))
+    report['software_record'] = 'software.json'
+    report['dispatcher_sha256'] = digest(Path(__file__).resolve())
+    report['manifest_sha256'] = digest(ROOT/'config/steps.json')
+    report['shared_script_sha256'] = {str(p.relative_to(ROOT)): digest(p)
+        for p in sorted((ROOT/'scripts/lib').glob('*.R'))}
     report_path = logdir/'run.json'
     report_path.write_text(json.dumps(report, indent=2))
     rc = 0
@@ -94,7 +129,7 @@ def main():
         print(f"[{step}] {spec['title']}", flush=True)
         log = logdir/(step+'.log')
         with log.open('w') as stream:
-            process = subprocess.Popen(['Rscript',str(script)], cwd=ROOT, env=env, stdout=subprocess.PIPE,
+            process = subprocess.Popen(['Rscript','--vanilla',str(script)], cwd=ROOT, env=env, stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT, text=True)
             for line in process.stdout:
                 print(line, end='', flush=True)
