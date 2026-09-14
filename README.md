@@ -45,41 +45,21 @@ and are selected according to data availability.
 
 ## Analysis modules
 
-| Module | Biological focus | Analyses and products |
+| Module | Biological focus | Key analyses |
 |---|---|---|
-| **[A · Characterization](docs/module-a.md)** | Cellular composition and organization | Existing UMAP embeddings, cluster composition by response, CellChat communication patterns, and spatial distributions |
-| **[B · Transcriptional](docs/module-b.md)** | Expression programs associated with resistance | Differentially expressed genes, GO/KEGG/Hallmark enrichment, intratumor heterogeneity, EMT scores, and LINCS signature connectivity |
-| **[C · Regulatory](docs/module-c.md)** | Candidate regulatory associations | Variant-analysis components and enrichment of RNA-binding-protein and miRNA target sets |
-| **[D · Immunogenomic](docs/module-d.md)** | RNA-processing and immune-presentation features | Alternative polyadenylation, HLA typing, and candidate peptide–MHC structural analysis |
+| **[A.&nbsp;Characterization](docs/module-a.md)** | Cellular organization | UMAP; cluster composition;<br>CellChat; spatial distribution |
+| **[B.&nbsp;Transcriptional](docs/module-b.md)** | Resistance-associated expression | DEGs; pathway enrichment;<br>ITH; EMT; drug connectivity |
+| **[C.&nbsp;Regulatory](docs/module-c.md)** | Regulatory associations | Variant-analysis components;<br>RBP and miRNA enrichment |
+| **[D.&nbsp;Immunogenomic](docs/module-d.md)** | RNA processing and immunity | APA; HLA typing;<br>peptide–MHC structure |
 
-The module guides describe each script's inputs, dependencies, and scope.
-Availability of individual components, including the TF motif panel shown in
-Figure 1, is explained under [Implementation scope](#implementation-scope).
+See the module guides for inputs and methods, and
+[Implementation scope](#implementation-scope) for component availability.
 
 ## Quick start
 
-Run the analyses on an HPC system with suitable storage and memory. Begin from
-the repository root. If using a downloaded package ZIP, extract it on the HPC,
-enter its directory, and skip the two Git checkout commands below:
-
-```bash
-git clone https://github.com/QSong-github/RESIST.git RESIST
-cd RESIST
-conda env create -f config/setup/environment.yml
-conda activate resist
-Rscript --vanilla config/setup/install_r_packages.R
-```
-
-Follow [tutorial Steps 2–3](TUTORIAL.md#step-2--download-the-example-directly-onto-the-hpc)
-to download **`GSE104987_seurat_afterAnno.RDS`** directly onto the HPC, unpack the
-bundled references, and inspect the input. The example profile writes to
-`data/results/example/`. Its A–C walkthrough does not require the large LINCS
-database or raw sequencing files.
-
-**Each command below runs the analyses described in its section.** A, B, and C
-use the shared example; C requires the differential-expression table produced by
-B. D requires a separately prepared APA cohort. Additional analyses within each
-module are described in the linked module guides.
+On the HPC, [install dependencies and prepare the example](TUTORIAL.md), then run
+these commands from the repository root. **Run B before C.** D requires
+[a separate APA cohort](TUTORIAL.md#step-7--module-d-with-a-separately-prepared-apa-cohort).
 
 ### A. Characterization
 
@@ -87,16 +67,7 @@ module are described in the linked module guides.
 bash scripts/run_A.sh --config config/example.yaml
 ```
 
-**Produces one four-panel overview figure** containing:
-
-- Three views of the existing UMAP, colored by cell cluster, response condition,
-  and annotated cell type.
-- A grouped bar chart comparing cluster composition between sensitive and
-  resistant cells.
-
-The figure is saved as **PDF and PNG** in `data/results/example/A/`.
-It uses the input object's existing coordinates and annotations. Communication
-and spatial analyses require additional inputs; see the [Module A guide](docs/module-a.md).
+**Output:** UMAP and cluster-composition figure (PDF/PNG) in `data/results/example/A/`.
 
 ### B. Transcriptional analysis
 
@@ -104,84 +75,29 @@ and spatial analyses require additional inputs; see the [Module A guide](docs/mo
 bash scripts/run_B.sh --config config/example.yaml
 ```
 
-**Produces differential-expression results and a heterogeneity comparison:**
-
-- **Full DEG table (CSV):** tested genes and their expression differences between
-  resistant and sensitive cells, within each eligible cell type.
-- **Significant DEG table (CSV):** genes passing the analysis's
-  significance and fold-change criteria.
-- **Tumor-cell volcano plot (PDF and PNG):** expression effect sizes and adjusted
-  p-values.
-- **Intratumor-heterogeneity box plot (PDF and PNG):** comparison of PCA-based
-  heterogeneity scores between response conditions.
-
-Files are saved in `data/results/example/B/`. Positive log fold changes indicate
-higher expression in resistant cells. Keep the full DEG table for Module C.
-Pathway, EMT, and drug-signature analyses are described in the
-[Module B guide](docs/module-b.md).
+**Output:** Full/significant DEG tables (CSV), tumor-cell volcano and
+intratumor-heterogeneity plots (PDF/PNG) in `data/results/example/B/`.
 
 ### C. Regulatory analysis
-
-**Run B first**, using the same example configuration and results directory.
 
 ```bash
 bash scripts/run_C.sh --config config/example.yaml
 ```
 
-**Produces RNA-binding-protein (RBP) target-enrichment results:**
-
-- **RBP-enrichment table (CSV):** overlap of up- and down-regulated tumor genes
-  with the bundled RBP target sets, including enrichment statistics.
-- **RBP circle plots (PDF and PNG):** summaries of eligible enriched target sets
-  for each expression direction.
-
-Files are saved in `data/results/example/C/`. This command reads the full DEG
-table generated by B. Circle plots are produced only when significance and
-count thresholds are met, so an enrichment table can exist without a plot.
-The miRNA and variant branches have separate requirements in the
-[Module C guide](docs/module-c.md).
+**Output:** RBP-enrichment table (CSV) and eligible circle plots (PDF/PNG) in
+`data/results/example/C/`.
 
 ### D. Immunogenomic analysis
-
-Prepare a separate APA cohort following
-[tutorial Step 7](TUTORIAL.md#step-7--module-d-with-a-separately-prepared-apa-cohort).
-It requires scUTRquant TXS outputs, filtered 10x matrices, an annotation Seurat
-object, and the matching GTF; the shared GSE104987 example does not supply these
-inputs. Then run:
 
 ```bash
 bash scripts/run_D.sh --config config/config.yaml --apa-config config/apa_config.yaml
 ```
 
-**Produces alternative-polyadenylation (APA) summaries and comparisons:**
+**Output:** APA matrices (RDS), summary/mapping/differential tables (CSV), and
+eligible ECDF/violin plots (PDF/PNG) in `data/results/D/APA/<cohort_id>/`.
 
-- **Gene-by-cell relative-expression matrices (RDS)** and **per-cell mean
-  relative-expression summaries (CSV)**.
-- **Barcode-to-annotation mappings and mapping diagnostics (CSV)** for checking
-  how quantified cells match the annotation object.
-- **Differential APA results (CSV)** for eligible comparisons.
-- **ECDF and violin plots (PDF and PNG)** for eligible response groups and cell
-  types.
-
-Files are saved in `data/results/D/APA/<cohort_id>/`. Review mapping diagnostics
-before interpreting the comparisons. HLA typing and peptide–MHC structural
-analysis use separate commands and inputs in the [Module D guide](docs/module-d.md).
-
-### Check software and select additional analyses
-
-The installer finishes with small software checks for the R modules, including
-CellChat and its Bioconductor dependencies. To repeat those checks without
-installing packages, use the installer’s `--check` option. Use a launcher’s
-`--list` option to see available analyses and expected products:
-
-```bash
-Rscript --vanilla config/setup/install_r_packages.R --check
-bash scripts/run_B.sh --list
-```
-
-The [tutorial](TUTORIAL.md) provides output checkpoints and extension commands.
-The module guides explain individual analysis selections with `--steps`; the
-[output catalog](docs/outputs.md) lists their filenames and eligibility conditions.
+Detailed steps and output definitions: [tutorial](TUTORIAL.md) ·
+[output catalog](docs/outputs.md).
 
 ## Repository layout
 
