@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use RESIST, please cite the following."
-title: "RESIST: a single-cell and spatial omics resource of regulatory mechanisms underlying cancer drug resistance"
+message: "If you use RESIST, please cite the following. Jialu Liang, Yining Pan, and Minghao Zhou contributed equally. Correspondence: Qianqian Song (song1081@purdue.edu)."
+title: "RESIST: an integrative resource for systematic characterization of cancer drug resistance mechanisms"
 abstract: >-
   RESIST is a large-scale single-cell and spatial omics resource that
   systematically characterizes the regulatory mechanisms underlying cancer
@@ -8,9 +8,40 @@ abstract: >-
   522 single-cell and 96 spatial samples, 13 cancer types and 59 drug
   regimens.
 url: "https://resist.website/"
+repository-code: "https://github.com/QSong-github/RESIST"
 type: software
 authors:
-  - name: "The RESIST authors"
+  - given-names: "Jialu"
+    family-names: "Liang"
+    affiliation: "Department of Health Outcomes and Biomedical Informatics, University of Florida, FL, USA"
+  - given-names: "Yining"
+    family-names: "Pan"
+    affiliation: "Department of Health Outcomes and Biomedical Informatics, University of Florida, FL, USA"
+  - given-names: "Minghao"
+    family-names: "Zhou"
+    affiliation: "Department of Biostatistics and Health Data Science, Indiana University School of Medicine, IN, USA"
+  - given-names: "Sen"
+    family-names: "Guo"
+    affiliation: "Department of Biostatistics and Health Data Science, Indiana University School of Medicine, IN, USA"
+  - given-names: "Daling"
+    family-names: "Shi"
+    affiliation: "Department of Health Outcomes and Biomedical Informatics, University of Florida, FL, USA"
+  - given-names: "Zijia"
+    family-names: "Tang"
+    affiliation: "Department of Computer Science, Trinity College of Arts & Sciences, Duke University, NC, USA"
+  - given-names: "Rui"
+    family-names: "Yin"
+    affiliation: "Department of Health Outcomes and Biomedical Informatics, University of Florida, FL, USA"
+  - given-names: "Xiaobo"
+    family-names: "Zhou"
+    affiliation: "McWilliams School of Biomedical Informatics, University of Texas Health Science Center at Houston, TX, USA"
+  - given-names: "Weizhou"
+    family-names: "Zhang"
+    affiliation: "Department of Pathology, Immunology and Laboratory Medicine, College of Medicine, University of Florida, FL, USA; University of Florida Health Cancer Institute, University of Florida, Gainesville, FL, USA"
+  - given-names: "Qianqian"
+    family-names: "Song"
+    affiliation: "School of Applied and Creative Computing, Purdue University, IN, USA"
+    email: "song1081@purdue.edu"
 keywords:
   - drug resistance
   - single-cell transcriptomics
