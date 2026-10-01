@@ -13,6 +13,10 @@
   <a href="docs/hpc.md">HPC guide</a>
 </p>
 
+<p align="center">
+  <a href="https://doi.org/10.5281/zenodo.23072888"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23072888.svg" alt="DOI: 10.5281/zenodo.23072888"/></a>
+</p>
+
 ## Overview
 
 Cancer drug resistance involves changes in cellular composition, transcriptional
